@@ -1,10 +1,16 @@
 import "./App.css";
-import MyTable from "./components/MyTable";
+import AddPhone from "./components/AddPhone";
+import MyHeader from "./components/MyHeader";
+import PhonesTable from "./components/PhonesTable";
+import TestTable from "./components/TestTable";
 
 function App() {
   return (
     <div dir="rtl">
-      <MyTable />
+      <MyHeader />
+      <AddPhone />
+      <PhonesTable />
+      {/* <TestTable /> */}
     </div>
   );
 }
