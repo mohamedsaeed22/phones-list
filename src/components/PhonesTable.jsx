@@ -1,219 +1,231 @@
-import Table from "@mui/material/Table";
-import TableBody from "@mui/material/TableBody";
-import TableCell, { tableCellClasses } from "@mui/material/TableCell";
-import TableContainer from "@mui/material/TableContainer";
-import TableHead from "@mui/material/TableHead";
-import TableRow from "@mui/material/TableRow";
-import Paper from "@mui/material/Paper";
-import { styled } from "@mui/system";
-import { Fragment, useState } from "react";
+import React, { useEffect } from "react";
+import { DataGrid } from "@mui/x-data-grid";
+import { useDispatch ,useSelector } from "react-redux";
+import { getAllData } from "../store/dictionary-slice";
 
-const StyledTableCell = styled(TableCell)(({ theme }) => ({
-  [`&.${tableCellClasses.head}`]: {
-    // backgroundColor: theme.palette.common.black,
-    backgroundColor: "#1976d2",
-    color: theme.palette.common.white,
-    position: "sticky",
-    top: 0,
-    zIndex: 10,
-    fontWeight: "bold",
-  },
-  [`&.${tableCellClasses.body}`]: {
-    fontSize: 14,
-  },
-  borderRight: "1px solid #ddd",
-}));
-
-const DUMMY_DATA = [
-  {
-    sector: "الضبعه",
-    departments: [
-      {
-        name: "اداره النظم",
-        offices: [
-          {
-            office: "مكتب البرمجيات",
-            number: "1102",
-            notes: "لا يوجد ملاحظات",
-          },
-          { office: "مكتب الشبكات", number: "1101", notes: "لا يوجد ملاحظات" },
-        ],
-      },
-      {
-        name: "ادارى السعوديه",
-        offices: [
-          { office: "مدير الجهاز", number: "1001", notes: "لا يوجد ملاحظات" },
-          {
-            office: "مدير الاداره المركزيه",
-            number: "1010",
-            notes: "لا يوجد ملاحظات",
-          },
-          {
-            office: "قائد فوج المقر",
-            number: "1200",
-            notes: "لا يوجد ملاحظات",
-          },
-        ],
-      },
-    ],
-  },
-  {
-    sector: "اللاهون",
-    departments: [
-      {
-        name: "المساحه",
-        offices: [
-          { office: "مكتب التصميم", number: "2001", notes: "لا يوجد ملاحظات" },
-          {
-            office: "مكتب البحث والتطوير",
-            number: "2002",
-            notes: "لا يوجد ملاحظات",
-          },
-        ],
-      },
-      {
-        name: "النظم",
-        offices: [
-          { office: "مدير النظم", number: "2101", notes: "لا يوجد ملاحظات" },
-          { office: "مهندس شبكات", number: "2102", notes: "لا يوجد ملاحظات" },
-        ],
-      },
-    ],
-  },
+// const d = [
+//   {
+//     id: "3176474d-6efb-484a-95e0-08dc3cf51453",
+//     name: "ضبعة",
+//     departments: [
+//       {
+//         id: "112fda0f-ce5a-44b0-3a7a-08dc3cf896b1",
+//         name: "Dep 1",
+//         sectorId: "3176474d-6efb-484a-95e0-08dc3cf51453",
+//         offices: [
+//           {
+//             id: "2c7b98f6-699a-4d14-a60e-08dc3cf9b878",
+//             name: "office 1",
+//             phoneNumber: "",
+//             notes: null,
+//             departmentId: "112fda0f-ce5a-44b0-3a7a-08dc3cf896b1",
+//           },
+//           {
+//             id: "b49c175d-5de1-45a2-a60f-08dc3cf9b878",
+//             name: "office 2",
+//             phoneNumber: "",
+//             notes: null,
+//             departmentId: "112fda0f-ce5a-44b0-3a7a-08dc3cf896b1",
+//           },
+//           {
+//             id: "322f4380-aa89-461b-a610-08dc3cf9b878",
+//             name: "office 3",
+//             phoneNumber: "",
+//             notes: null,
+//             departmentId: "112fda0f-ce5a-44b0-3a7a-08dc3cf896b1",
+//           },
+//           {
+//             id: "e88632cf-41d4-4387-a611-08dc3cf9b878",
+//             name: "office 4",
+//             phoneNumber: "",
+//             notes: null,
+//             departmentId: "112fda0f-ce5a-44b0-3a7a-08dc3cf896b1",
+//           },
+//           {
+//             id: "f1d91762-ab53-46ee-a612-08dc3cf9b878",
+//             name: "office 5",
+//             phoneNumber: "",
+//             notes: null,
+//             departmentId: "112fda0f-ce5a-44b0-3a7a-08dc3cf896b1",
+//           },
+//         ],
+//       },
+//     ],
+//   },
+//   {
+//     id: "3176474d-6efb-484a-95e0-08dc3cf51453",
+//     name: "ضبعة",
+//     departments: [
+//       {
+//         id: "112fda0f-ce5a-44b0-3a7a-08dc3cf896b1",
+//         name: "Dep 1",
+//         sectorId: "3176474d-6efb-484a-95e0-08dc3cf51453",
+//         offices: [
+//           {
+//             id: "2c7b98f6-699a-4d14-a60e-08dc3cf9b878",
+//             name: "office 1",
+//             phoneNumber: "",
+//             notes: null,
+//             departmentId: "112fda0f-ce5a-44b0-3a7a-08dc3cf896b1",
+//           },
+//           {
+//             id: "b49c175d-5de1-45a2-a60f-08dc3cf9b878",
+//             name: "office 2",
+//             phoneNumber: "",
+//             notes: null,
+//             departmentId: "112fda0f-ce5a-44b0-3a7a-08dc3cf896b1",
+//           },
+//           {
+//             id: "322f4380-aa89-461b-a610-08dc3cf9b878",
+//             name: "office 3",
+//             phoneNumber: "",
+//             notes: null,
+//             departmentId: "112fda0f-ce5a-44b0-3a7a-08dc3cf896b1",
+//           },
+//           {
+//             id: "e88632cf-41d4-4387-a611-08dc3cf9b878",
+//             name: "office 4",
+//             phoneNumber: "",
+//             notes: null,
+//             departmentId: "112fda0f-ce5a-44b0-3a7a-08dc3cf896b1",
+//           },
+//           {
+//             id: "f1d91762-ab53-46ee-a612-08dc3cf9b878",
+//             name: "office 5",
+//             phoneNumber: "",
+//             notes: null,
+//             departmentId: "112fda0f-ce5a-44b0-3a7a-08dc3cf896b1",
+//           },
+//         ],
+//       },
+//     ],
+//   },
+//   {
+//     id: "3176474d-6efb-484a-95e0-08dc3cf51453",
+//     name: "ضبعة",
+//     departments: [
+//       {
+//         id: "112fda0f-ce5a-44b0-3a7a-08dc3cf896b1",
+//         name: "Dep 1",
+//         sectorId: "3176474d-6efb-484a-95e0-08dc3cf51453",
+//         offices: [
+//           {
+//             id: "2c7b98f6-699a-4d14-a60e-08dc3cf9b878",
+//             name: "office 1",
+//             phoneNumber: "",
+//             notes: null,
+//             departmentId: "112fda0f-ce5a-44b0-3a7a-08dc3cf896b1",
+//           },
+//           {
+//             id: "b49c175d-5de1-45a2-a60f-08dc3cf9b878",
+//             name: "office 2",
+//             phoneNumber: "",
+//             notes: null,
+//             departmentId: "112fda0f-ce5a-44b0-3a7a-08dc3cf896b1",
+//           },
+//           {
+//             id: "322f4380-aa89-461b-a610-08dc3cf9b878",
+//             name: "office 3",
+//             phoneNumber: "",
+//             notes: null,
+//             departmentId: "112fda0f-ce5a-44b0-3a7a-08dc3cf896b1",
+//           },
+//           {
+//             id: "e88632cf-41d4-4387-a611-08dc3cf9b878",
+//             name: "office 4",
+//             phoneNumber: "",
+//             notes: null,
+//             departmentId: "112fda0f-ce5a-44b0-3a7a-08dc3cf896b1",
+//           },
+//           {
+//             id: "f1d91762-ab53-46ee-a612-08dc3cf9b878",
+//             name: "office 5",
+//             phoneNumber: "",
+//             notes: null,
+//             departmentId: "112fda0f-ce5a-44b0-3a7a-08dc3cf896b1",
+//           },
+//         ],
+//       },
+//     ],
+//   },
+//   {
+//     id: "8de160a1-fccd-49ab-a1d3-08dc3cf9cd2f",
+//     name: "sector 2",
+//     departments: [
+//       {
+//         id: "6e7f19ee-db6b-4a14-909b-08dc3cf9de98",
+//         name: "Dep 2",
+//         sectorId: "8de160a1-fccd-49ab-a1d3-08dc3cf9cd2f",
+//         offices: [],
+//       },
+//       {
+//         id: "9196b756-e1d7-4a40-909c-08dc3cf9de98",
+//         name: "Dep 3",
+//         sectorId: "8de160a1-fccd-49ab-a1d3-08dc3cf9cd2f",
+//         offices: [],
+//       },
+//     ],
+//   },
+// ];
+const columns = [
+  { field: "id", headerName: "م", width: 20 },
+  { field: "name", headerName: "القطاع", width: 200 },
+  { field: "department", headerName: "الاداره", width: 200 },
+  { field: "office", headerName: "المكتب", width: 200 },
+  { field: "phoneNumber", headerName: "الرقم", width: 200 },
+  { field: "notes", headerName: "ملاحظات", width: 200 },
 ];
 
-function countObjects(dataArray) {
-  let totalCount = 0;
-  if (dataArray) {
-    totalCount++;
-    for (const departmentObj of dataArray.departments) {
-      totalCount++;
-      totalCount += departmentObj.offices.length;
-    }
-  }
-  return totalCount;
-}
+const flattenData = (data) => {
+  const flattenedData = [];
+  let idCounter = 1;
 
-export default function PhonesTable({ search }) {
-  const [data, setData] = useState(DUMMY_DATA);
+  data.forEach((sector) => {
+    sector.departments.forEach((department) => {
+      const offices = department.offices.length ? department.offices : [{}];
 
-  const highlightText = (text) => {
-    if (!search || search === "") {
-      return text;
-    }
+      offices.forEach((office) => {
+        flattenedData.push({
+          id: idCounter++,
+          name: sector.name || "",
+          department: department.name || "",
+          office: office.name || "",
+          phoneNumber: office.phoneNumber || "",
+          notes: office.notes || "",
+        });
+      });
+    });
+  });
 
-    const regex = new RegExp(`(${search})`, "gi");
-    return text.replace(
-      regex,
-      (match) => `<span style="background-color: yellow;">${match}</span>`
-    );
-  };
+  return flattenedData;
+};
 
-  // Convert both search and data to lowercase for case-insensitive search
-  // Filter the data based on the search input
-  const lowerCaseSearch = search.toLowerCase();
+const PhonesTable = () => {
+  const dispath = useDispatch();
+  const {data} = useSelector((state) => state.data);
+  console.log(data);
 
-  const filteredData = data.filter(
-    (row) =>
-      row.sector.toLowerCase().includes(lowerCaseSearch) ||
-      row.departments.some(
-        (dep) =>
-          dep.name.toLowerCase().includes(lowerCaseSearch) ||
-          dep.offices.some(
-            (office) =>
-              office.office.toLowerCase().includes(lowerCaseSearch) ||
-              office.number.toLowerCase().includes(lowerCaseSearch) ||
-              office.notes.toLowerCase().includes(lowerCaseSearch)
-          )
-      )
-  );
+  useEffect(()=>{
+    dispath(getAllData())
+  },[dispath])
+
+  const rows = flattenData(data && data);
 
   return (
-    <TableContainer
-      component={Paper}
-      style={{ maxHeight: "90vh", overflowY: "auto" }}
-    >
-      <Table aria-label="spanning table">
-        <TableHead>
-          <TableRow>
-            <StyledTableCell align="center">القطاع</StyledTableCell>
-            <StyledTableCell align="center">اداره / قرع / قسم</StyledTableCell>
-            <StyledTableCell align="center">المكتب</StyledTableCell>
-            <StyledTableCell align="center">الرقم</StyledTableCell>
-            <StyledTableCell align="center">ملاحظات</StyledTableCell>
-          </TableRow>
-        </TableHead>
-
-        <TableBody>
-          {filteredData.length === 0 ? (
-            <TableRow>
-              <StyledTableCell align="center" colSpan={5}>
-                لا يوجد بيانات
-              </StyledTableCell>
-            </TableRow>
-          ) : (
-            filteredData?.map((row, index) => (
-              <Fragment key={index}>
-                <TableRow key={row}>
-                  <StyledTableCell
-                    align="center"
-                    rowSpan={countObjects(data[index])}
-                  >
-                    <div
-                      dangerouslySetInnerHTML={{
-                        __html: highlightText(row.sector),
-                      }}
-                    />
-                  </StyledTableCell>
-                </TableRow>
-                {row?.departments?.map((dep) => (
-                  <Fragment key={dep}>
-                    <TableRow key={dep}>
-                      <StyledTableCell
-                        align="center"
-                        rowSpan={dep.offices.length + 1}
-                      >
-                        <div
-                          dangerouslySetInnerHTML={{
-                            __html: highlightText(dep.name),
-                          }}
-                        />
-                      </StyledTableCell>
-                    </TableRow>
-                    {dep?.offices?.map((office) => (
-                      <>
-                        <TableRow key={office}>
-                          <StyledTableCell align="center">
-                            <div
-                              dangerouslySetInnerHTML={{
-                                __html: highlightText(office.office),
-                              }}
-                            />
-                          </StyledTableCell>
-                          <StyledTableCell align="center">
-                            <div
-                              dangerouslySetInnerHTML={{
-                                __html: highlightText(office.number),
-                              }}
-                            />
-                          </StyledTableCell>
-                          <StyledTableCell align="center">
-                            <div
-                              dangerouslySetInnerHTML={{
-                                __html: highlightText(office.notes),
-                              }}
-                            />
-                          </StyledTableCell>
-                        </TableRow>
-                      </>
-                    ))}
-                  </Fragment>
-                ))}
-              </Fragment>
-            ))
-          )}
-        </TableBody>
-      </Table>
-    </TableContainer>
+    <div style={{ minHeight: "100%", width: "100%", paddingInline: "8px" }}>
+      <DataGrid
+        rows={rows}
+        columns={columns}
+        initialState={{
+          pagination: {
+            paginationModel: { page: 0, pageSize: 12 },
+          },
+        }}
+        pageSizeOptions={[5, 10]}
+        columnBuffer={3}
+      />
+    </div>
   );
-}
+};
+
+export default PhonesTable;
