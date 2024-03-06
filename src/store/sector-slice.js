@@ -30,12 +30,9 @@ export const addSector = createAsyncThunk(
 
 export const updateSector = createAsyncThunk(
   "sector/update",
-  async (dep, thunkAPI) => {
+  async (sector, thunkAPI) => {
     try {
-      const response = await api.put(
-        "reporting/authentication/generateToken",
-        dep
-      );
+      const response = await api.post("api/Sector/Update", sector);
       return response;
     } catch (error) {
       return thunkAPI.rejectWithValue(serializeError(error.message));

@@ -6,7 +6,7 @@ export const addDepartement = createAsyncThunk(
   async (dep, thunkAPI) => {
     try {
       const response = await api.post(
-        "reporting/authentication/generateToken",
+        "api/Department/Create",
         dep
       );
       return response;
@@ -33,7 +33,7 @@ export const updateDepartement = createAsyncThunk(
   async (dep, thunkAPI) => {
     try {
       const response = await api.put(
-        "reporting/authentication/generateToken",
+        "api/Department/Update",
         dep
       );
       return response;
@@ -44,7 +44,7 @@ export const updateDepartement = createAsyncThunk(
 );
 
 const departementsList = (list) => {
-  return list.map((option) => ({
+  return list?.map((option) => ({
     ...option,
     value: option.id,
     label: option.name,

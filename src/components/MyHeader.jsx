@@ -21,7 +21,6 @@ const MyHeader = (props) => {
   const [open, setOpen] = useState(false);
   const usernameRef = useRef(null);
   const passwordRef = useRef(null);
-  console.log(error);
   const handleSearch = (e) => {
     setSearch(e.target.value);
   };

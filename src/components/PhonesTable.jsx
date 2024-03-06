@@ -1,7 +1,11 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import { DataGrid } from "@mui/x-data-grid";
-import { useDispatch ,useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { getAllData } from "../store/dictionary-slice";
+import { Edit } from "@mui/icons-material";
+import { CircularProgress, Typography, TextField, Button } from "@mui/material";
+import EditPhone from "./EditPhone";
+import MyModal from "./MyModal";
 
 // const d = [
 //   {
@@ -167,25 +171,18 @@ import { getAllData } from "../store/dictionary-slice";
 //     ],
 //   },
 // ];
-const columns = [
-  { field: "id", headerName: "م", width: 20 },
-  { field: "name", headerName: "القطاع", width: 200 },
-  { field: "department", headerName: "الاداره", width: 200 },
-  { field: "office", headerName: "المكتب", width: 200 },
-  { field: "phoneNumber", headerName: "الرقم", width: 200 },
-  { field: "notes", headerName: "ملاحظات", width: 200 },
-];
 
 const flattenData = (data) => {
   const flattenedData = [];
   let idCounter = 1;
-
-  data.forEach((sector) => {
-    sector.departments.forEach((department) => {
-      const offices = department.offices.length ? department.offices : [{}];
-
-      offices.forEach((office) => {
+  data?.forEach((sector) => {
+    sector.departments?.forEach((department) => {
+      const offices = department?.offices?.length ? department.offices : [{}];
+      offices?.forEach((office) => {
         flattenedData.push({
+          sectorId: sector.id,
+          departmentId: department.id,
+          officeId: office.id,
           id: idCounter++,
           name: sector.name || "",
           department: department.name || "",
@@ -200,31 +197,128 @@ const flattenData = (data) => {
   return flattenedData;
 };
 
-const PhonesTable = () => {
+const PhonesTable = ({ search }) => {
   const dispath = useDispatch();
-  const {data} = useSelector((state) => state.data);
-  console.log(data);
+  const { data, isLoading, error } = useSelector((state) => state.data);
+  const [filteredRows, setFilteredRows] = useState([]);
+  const [showModal, setShowModal] = useState(false);
+  const [updatedValues, setUpdatedValues] = useState({});
+  const { isAuthenticated } = useSelector((state) => state.auth);
 
-  useEffect(()=>{
-    dispath(getAllData())
-  },[dispath])
+  const columns = useMemo(() => {
+    const baseColumns = [
+      { field: "id", headerName: "م", width: 20 },
+      { field: "name", headerName: "القطاع", width: 200 },
+      { field: "department", headerName: "الاداره", width: 200 },
+      { field: "office", headerName: "المكتب", width: 200 },
+      { field: "phoneNumber", headerName: "الرقم", width: 200 },
+      { field: "notes", headerName: "ملاحظات", width: 200 },
+    ];
 
-  const rows = flattenData(data && data);
+    const actionsColumn = {
+      field: "actions",
+      headerName: "الاكشن",
+      width: 100,
+      renderCell: (params) => (
+        <Edit
+          sx={{ color: "green", cursor: "pointer" }}
+          onClick={() => handleEditClick(params.row)}
+        />
+      ),
+    };
+
+    return isAuthenticated ? [...baseColumns, actionsColumn] : baseColumns;
+  }, [isAuthenticated]);
+
+  const handleEditClick = (row) => {
+    console.log(row);
+    setUpdatedValues(row);
+    setShowModal(true);
+    console.log(filteredRows);
+    // const { sectorId, departmentId, officeId } = extractIdsFromRow(row.id);
+    // console.log(sectorId, departmentId, officeId);
+  };
+
+  useEffect(() => {
+    dispath(getAllData());
+  }, [dispath]);
+
+  useEffect(() => {
+    if (!search) {
+      setFilteredRows(flattenData(data));
+    } else {
+      const filteredData = flattenData(data).filter((row) =>
+        columns.some((column) =>
+          String(row[column.field]).toLowerCase().includes(search.toLowerCase())
+        )
+      );
+      setFilteredRows(filteredData);
+    }
+  }, [data, search, columns]);
+
+  // const extractIdsFromRow = (rowId) => {
+  //   let result = {};
+  //   filteredRows?.forEach((sector) => {
+  //     const department = sector.departments.find((dep) =>
+  //       dep.offices.find((office) => office.id === rowId)
+  //     );
+
+  //     if (department) {
+  //       const office = department.offices.find((office) => office.id === rowId);
+  //       result = {
+  //         sectorId: sector.id,
+  //         departmentId: department.id,
+  //         officeId: office.id,
+  //       };
+  //     }
+  //   });
+
+  //   return result;
+  // };
+  // const rows = flattenData(data && data);
+
+  const handleClose = () => {
+    setShowModal(false);
+  };
 
   return (
-    <div style={{ minHeight: "100%", width: "100%", paddingInline: "8px" }}>
-      <DataGrid
-        rows={rows}
-        columns={columns}
-        initialState={{
-          pagination: {
-            paginationModel: { page: 0, pageSize: 12 },
-          },
-        }}
-        pageSizeOptions={[5, 10]}
-        columnBuffer={3}
+    <>
+      <EditPhone
+        open={showModal}
+        setOpen={handleClose}
+        updatedValues={updatedValues}
       />
-    </div>
+      <div
+        style={{
+          minHeight: "100%",
+          width: "100%",
+          paddingInline: "8px",
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "center",
+        }}
+      >
+        {isLoading ? (
+          <CircularProgress />
+        ) : error ? (
+          <Typography color="error">{error}</Typography>
+        ) : filteredRows?.length > 0 ? (
+          <DataGrid
+            rows={filteredRows}
+            columns={columns}
+            initialState={{
+              pagination: {
+                paginationModel: { page: 0, pageSize: 12 },
+              },
+            }}
+            pageSizeOptions={[5, 10]}
+            // columnBuffer={3}
+          />
+        ) : (
+          <Typography>لا توجد نتائج بحث</Typography>
+        )}
+      </div>
+    </>
   );
 };
 

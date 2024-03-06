@@ -24,7 +24,7 @@ const officeSlice = createSlice({
   initialState,
   reducers: {},
   extraReducers: (builder) => {
-    // get all data
+    // add office
     builder
       .addCase(addOffice.pending, (state) => {
         state.isLoading = true;
@@ -32,6 +32,7 @@ const officeSlice = createSlice({
       })
       .addCase(addOffice.fulfilled, (state, action) => {
         state.isLoading = true;
+        console.log(action.payload.data)
         state.offices.push(action.payload.data);
       })
       .addCase(addOffice.rejected, (state, action) => {

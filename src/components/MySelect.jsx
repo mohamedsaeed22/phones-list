@@ -17,6 +17,7 @@ const MySelect = ({
   holderName,
   disable = false,
   flag,
+  sectorId,
 }) => {
   const [selectedOption, setSelectedOption] = useState(null);
   const dispatch = useDispatch();
@@ -48,10 +49,10 @@ const MySelect = ({
       }
       if (flag === "departements") {
         console.log(" added option sec", newValue.value);
-        dispatch(addDepartement(newValue.value))
+        dispatch(addDepartement({ name: newValue.value, sectorId }))
           .unwrap()
           .then((res) => {
-            console.log(res);
+            console.log(res.data)
             const myObj = res.data;
             const selectedVal = {
               ...myObj,

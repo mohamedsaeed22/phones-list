@@ -11,8 +11,7 @@ function App() {
     <div dir="rtl">
       <MyHeader search={search} setSearch={setSearch} />
       {isAuthenticated && <AddPhone />}
-      {/* <PhonesTable search={search} /> */}
-      <PhonesTable/>
+      <PhonesTable search={search}/>
     </div>
   );
 }

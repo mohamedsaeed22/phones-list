@@ -6,7 +6,8 @@ export const getAllData = createAsyncThunk(
   async (_, thunkAPI) => {
     try {
       const response = await api.get("GetAllDictionary");
-      return response;
+      const responseData = response.data;
+      return responseData;
     } catch (error) {
       return error.message;
     }
@@ -15,7 +16,6 @@ export const getAllData = createAsyncThunk(
 
 const initialState = {
   data: [],
-  depsInSector: [],
   isLoading: false,
   error: null,
 };
@@ -24,18 +24,11 @@ const dictionarySlice = createSlice({
   name: "dictionary",
   initialState,
   reducers: {
-    getDepartmentsInSector: (state, action) => {
+    pushOffice: (state, action) => {
       console.log(action.payload);
-      console.log(state.data);
-      const sector = state.data.find((s) => s.id === action.payload);
-      if (!sector) {
-        state.depsInSector = [];
+      if (action.payload) {
+        state.data.push(action.payload);
       }
-      state.depsInSector = sector.departments.map((option) => ({
-        ...option,
-        value: option.id,
-        label: option.name,
-      }));
     },
   },
   extraReducers: (builder) => {
@@ -46,8 +39,8 @@ const dictionarySlice = createSlice({
         state.error = null;
       })
       .addCase(getAllData.fulfilled, (state, action) => {
-        state.isLoading = true;
-        state.data = action.payload.data;
+        state.isLoading = false;
+        state.data = action.payload;
       })
       .addCase(getAllData.rejected, (state, action) => {
         state.isLoading = false;
@@ -56,6 +49,6 @@ const dictionarySlice = createSlice({
   },
 });
 
-export const { getDepartmentsInSector } = dictionarySlice.actions;
+export const { pushOffice } = dictionarySlice.actions;
 
 export default dictionarySlice.reducer;

@@ -6,26 +6,19 @@ import { useDispatch } from "react-redux";
 import { useSelector } from "react-redux";
 import { getAllSectors } from "../store/sector-slice";
 import { getAllDepartements } from "../store/departement-slice";
-import {
-  getAllData,
-  getDepartmentsInSector,
-} from "./../store/dictionary-slice";
+import { getAllData, pushOffice } from "./../store/dictionary-slice";
 import { addOffice } from "../store/office-slice";
 
 const AddPhone = () => {
   const dispatch = useDispatch();
   const { sectors } = useSelector((state) => state.sector);
   const { data } = useSelector((state) => state.data);
-  // const { depsInSector } = useSelector((state) => state.departement);
   const [sector, setSector] = useState("");
   const [dep, setDep] = useState("");
   const [office, setOffice] = useState("");
   const [phone, setPhone] = useState("");
   const [notes, setNotes] = useState("");
   const [depsArr, setDepsArr] = useState();
-
-  console.log(data);
-  // console.log(depsInSector);
 
   useEffect(() => {
     dispatch(getAllData());
@@ -47,25 +40,30 @@ const AddPhone = () => {
 
   const handleSectorValue = (selectedValue) => {
     setSector(selectedValue);
-    console.log(selectedValue);
     selectedValue && setDepsArr(depsInSector(selectedValue.value));
   };
 
   const handledepValue = (selectedValue) => {
+    setDepsArr((prev) => [...prev, selectedValue]);
     setDep(selectedValue);
-    console.log(selectedValue);
   };
 
-  const handleAddPhone = (e) => {
+  const handleAddPhone = async (e) => {
     e.preventDefault();
     const addPhone = {
-      name: "office",
+      name: office,
       phoneNumber: phone,
       notes: notes,
       departmentId: dep.id,
     };
-    console.log(dep.id, office, phone, notes);
-    dispatch(addOffice(addPhone));
+    await dispatch(addOffice(addPhone))
+      .unwrap()
+      .then((res) => {
+        dispatch(getAllData());
+      })
+      .catch((err) => {
+        console.log(err);
+      });
   };
 
   return (
@@ -90,6 +88,7 @@ const AddPhone = () => {
           holderName="اختر الاداره"
           disable={!sector && true}
           flag="departements"
+          sectorId={sector?.id}
         />
         <TextField
           id="office-input"

@@ -2,11 +2,12 @@ import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import { serializeError } from "serialize-error";
 import { api } from "../api/axiosInstance";
 import Cookies from "js-cookie";
+import { jwtDecode } from "jwt-decode";
 
 export const login = createAsyncThunk(
   "auth/login",
   async (credentials, thunkAPI) => {
-     try {
+    try {
       const response = await api.post("api/Identity/Login", credentials);
       return response;
     } catch (error) {
@@ -39,7 +40,10 @@ const authSlice = createSlice({
       .addCase(login.fulfilled, (state, { payload }) => {
         state.isLoading = false;
         if (payload.status === 200) {
-          Cookies.set("token", payload.data.token, {});
+          const token = payload.data.token;
+          const decodedToken = jwtDecode(token);
+          const expirationTime = new Date(decodedToken.exp * 1000);
+          Cookies.set("token", token, { expires: expirationTime });
           state.isAuthenticated = true;
         } else {
           // Handle other success cases (if needed)
