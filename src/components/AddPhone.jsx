@@ -1,24 +1,36 @@
-import { Stack, TextField, Button } from "@mui/material";
+import { Stack, TextField, Button, Box } from "@mui/material";
 import AddIcCallIcon from "@mui/icons-material/AddIcCall";
 import MySelect from "./MySelect";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useState } from "react";
 import { useDispatch } from "react-redux";
 import { useSelector } from "react-redux";
-import { getAllSectors } from "../store/sector-slice";
-import { getAllDepartements } from "../store/departement-slice";
-import { getAllData, pushOffice } from "./../store/dictionary-slice";
+import { addSector, getAllSectors } from "../store/sector-slice";
+import { addDepartement, getAllDepartements } from "../store/departement-slice";
+import { getAllData } from "./../store/dictionary-slice";
 import { addOffice } from "../store/office-slice";
+import CreatableSelect from "react-select/creatable";
+import { notifyFailed, notifySuccess } from "./ToastifyAlert";
+
+const customStyles = {
+  control: (provided) => ({
+    ...provided,
+    fontFamily: "roboto",
+  }),
+};
+const formatCreateLabel = (inputValue) => `اضافة: ${inputValue}`;
 
 const AddPhone = () => {
   const dispatch = useDispatch();
   const { sectors } = useSelector((state) => state.sector);
   const { data } = useSelector((state) => state.data);
-  const [sector, setSector] = useState("");
-  const [dep, setDep] = useState("");
+  const [selectedSector, setSelectedSector] = useState("");
+
+  const [deps, setDeps] = useState([]);
+  const [selectedDepartement, setSelectedDepartement] = useState("");
+
   const [office, setOffice] = useState("");
   const [phone, setPhone] = useState("");
   const [notes, setNotes] = useState("");
-  const [depsArr, setDepsArr] = useState();
 
   useEffect(() => {
     dispatch(getAllData());
@@ -27,43 +39,77 @@ const AddPhone = () => {
   }, [dispatch]);
 
   const depsInSector = (id) => {
-    const sector = data.find((s) => s.id === id);
+    const sector = data?.find((s) => s.id === id);
     if (!sector) {
       return [];
     }
-    return sector.departments.map((option) => ({
+    return sector?.departments?.map((option) => ({
       ...option,
-      value: option.id,
-      label: option.name,
+      value: option?.id,
+      label: option?.name,
     }));
   };
 
-  const handleSectorValue = (selectedValue) => {
-    setSector(selectedValue);
-    selectedValue && setDepsArr(depsInSector(selectedValue.value));
-  };
-
-  const handledepValue = (selectedValue) => {
-    setDepsArr((prev) => [...prev, selectedValue]);
-    setDep(selectedValue);
-  };
-
-  const handleAddPhone = async (e) => {
+  const handleAddPhone = (e) => {
     e.preventDefault();
     const addPhone = {
       name: office,
       phoneNumber: phone,
       notes: notes,
-      departmentId: dep.id,
+      departmentId: selectedDepartement.id,
     };
-    await dispatch(addOffice(addPhone))
+    dispatch(addOffice(addPhone))
       .unwrap()
-      .then((res) => {
+      .then(() => {
+        notifySuccess("تم اضافه الرقم بنجاح");
         dispatch(getAllData());
       })
       .catch((err) => {
-        console.log(err);
+        notifyFailed("حدث خطا ما " + err.message);
       });
+  };
+
+  const handleSectorChange = async (newValue, actionMeta) => {
+    if (actionMeta.action === "select-option") {
+      setSelectedSector(newValue);
+      setDeps(depsInSector(newValue.id));
+      setSelectedDepartement(null);
+    } else if (actionMeta.action === "create-option") {
+      await dispatch(addSector(newValue.value)).then(({ payload }) => {
+        console.log(payload);
+        const myObj = payload.data;
+        const selectedVal = {
+          ...myObj,
+          value: myObj?.id,
+          label: myObj?.name,
+        };
+        setDeps(depsInSector(selectedVal.id));
+        setSelectedSector(selectedVal);
+      });
+    } else {
+      setSelectedSector(newValue);
+    }
+  };
+
+  const handleDepartementChange = async (newValue, actionMeta) => {
+    if (actionMeta.action === "select-option") {
+      setSelectedDepartement(newValue);
+    } else if (actionMeta.action === "create-option") {
+      await dispatch(
+        addDepartement({ name: newValue.value, sectorId: selectedSector.id })
+      ).then(({ payload }) => {
+        const myObj = payload.data;
+        const selectedVal = {
+          ...myObj,
+          value: myObj?.id,
+          label: myObj?.name,
+        };
+        setDeps((prev) => [...prev, selectedVal]);
+        setSelectedDepartement(selectedVal);
+      });
+    } else {
+      setSelectedDepartement(newValue);
+    }
   };
 
   return (
@@ -76,20 +122,32 @@ const AddPhone = () => {
         alignItems="center"
         justifyContent="center"
       >
-        <MySelect
-          options={sectors}
-          handleSelectedValue={handleSectorValue}
-          holderName="اختر القطاع"
-          flag="sectors"
-        />
-        <MySelect
-          options={depsArr}
-          handleSelectedValue={handledepValue}
-          holderName="اختر الاداره"
-          disable={!sector && true}
-          flag="departements"
-          sectorId={sector?.id}
-        />
+        <Box width={229}>
+          <CreatableSelect
+            required
+            isClearable
+            options={sectors}
+            value={selectedSector}
+            onChange={handleSectorChange}
+            placeholder="اختر القطاع"
+            styles={customStyles}
+            formatCreateLabel={formatCreateLabel}
+          />
+        </Box>
+
+        <Box width={229}>
+          <CreatableSelect
+            required
+            isClearable
+            isDisabled={!selectedSector}
+            options={deps}
+            value={selectedSector ? selectedDepartement : null}
+            onChange={handleDepartementChange}
+            placeholder="اختر الاداره"
+            styles={customStyles}
+            formatCreateLabel={formatCreateLabel}
+          />
+        </Box>
         <TextField
           id="office-input"
           placeholder="المكتب"

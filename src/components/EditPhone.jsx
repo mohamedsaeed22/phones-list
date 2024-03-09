@@ -5,6 +5,9 @@ import { useEffect, useState } from "react";
 import { useDispatch } from "react-redux";
 import { updateSector } from "../store/sector-slice";
 import { updateDepartement } from "../store/departement-slice";
+import { updateOffice } from "../store/office-slice";
+import { notifyFailed, notifySuccess } from "./ToastifyAlert";
+import { getAllData } from "../store/dictionary-slice";
 const initialObj = {
   id: "",
   department: "",
@@ -20,11 +23,18 @@ const EditPhone = ({ open, setOpen, updatedValues }) => {
     setPhonesArr(updatedValues);
   }, [updatedValues]);
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     if (updatedValues.name !== phoneArr.name) {
-      dispatch(updateSector({ name: phoneArr.name, id: phoneArr.sectorId }));
-      console.log("will be updated the sector");
+      dispatch(updateSector({ name: phoneArr.name, id: phoneArr.sectorId }))
+        .unwrap()
+        .then(() => {
+          notifySuccess("تم تعديل القطاع بنجاح");
+          dispatch(getAllData());
+        })
+        .catch((errpr) => {
+          notifyFailed("حدث خطا ما");
+        });
     }
     if (updatedValues.department !== phoneArr.department) {
       dispatch(
@@ -33,11 +43,37 @@ const EditPhone = ({ open, setOpen, updatedValues }) => {
           sectorId: phoneArr.sectorId,
           id: phoneArr.departmentId,
         })
-      );
-      console.log("will be updated the department");
+      )
+        .unwrap()
+        .then(() => {
+          notifySuccess("تم تعديل القسم بنجاح");
+          dispatch(getAllData());
+        })
+        .catch((errpr) => {
+          notifyFailed("حدث خطا ما");
+        });
     }
-    if (updatedValues.office !== phoneArr.office) {
-      console.log("will be updated the department");
+    if (
+      updatedValues.office !== phoneArr.office ||
+      updatedValues.notes !== phoneArr.notes
+    ) {
+      dispatch(
+        updateOffice({
+          name: phoneArr.office,
+          id: phoneArr.officeId,
+          phoneNumber: phoneArr.phoneNumber,
+          notes: phoneArr.notes,
+          departmentId: phoneArr.departmentId,
+        })
+      )
+        .unwrap()
+        .then(() => {
+          notifySuccess("تم تعديل المكتب بنجاح");
+          dispatch(getAllData());
+        })
+        .catch((error) => {
+          notifyFailed("حدث خطأ ما: " + error.message);
+        });
     }
     setOpen(false);
   };

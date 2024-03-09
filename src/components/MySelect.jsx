@@ -4,13 +4,13 @@ import { useState } from "react";
 import { useDispatch } from "react-redux";
 import { addDepartement } from "../store/departement-slice";
 import { addSector } from "./../store/sector-slice";
+
 const customStyles = {
   control: (provided) => ({
     ...provided,
     fontFamily: "roboto",
   }),
 };
-
 const MySelect = ({
   handleSelectedValue,
   options,
@@ -22,49 +22,39 @@ const MySelect = ({
   const [selectedOption, setSelectedOption] = useState(null);
   const dispatch = useDispatch();
 
-  const handleChange = (newValue, actionMeta) => {
+  const handleChange = async (newValue, actionMeta) => {
     if (actionMeta.action === "select-option") {
-      console.log(" selected option", newValue);
       setSelectedOption(newValue);
       handleSelectedValue(newValue);
     } else if (actionMeta.action === "create-option") {
       if (flag === "sectors") {
-        console.log(" added option sec", newValue.value);
-        dispatch(addSector(newValue.value))
-          .unwrap()
-          .then((res) => {
-            console.log(res);
-            const myObj = res.data;
-            const selectedVal = {
-              ...myObj,
-              value: myObj.id,
-              label: myObj.name,
-            };
-            setSelectedOption(selectedVal);
-            handleSelectedValue(selectedVal);
-          })
-          .catch((e) => {
-            console.log(e);
-          });
+        await dispatch(addSector(newValue.value)).then(({ payload }) => {
+          console.log(payload);
+          const myObj = payload.data;
+          const selectedVal = {
+            ...myObj,
+            value: myObj?.id,
+            label: myObj?.name,
+          };
+          setSelectedOption(selectedVal);
+          handleSelectedValue(selectedVal);
+        });
       }
       if (flag === "departements") {
         console.log(" added option sec", newValue.value);
-        dispatch(addDepartement({ name: newValue.value, sectorId }))
-          .unwrap()
-          .then((res) => {
-            console.log(res.data)
-            const myObj = res.data;
+        dispatch(addDepartement({ name: newValue.value, sectorId })).then(
+          ({ payload }) => {
+            console.log(payload.data);
+            const myObj = payload.data;
             const selectedVal = {
               ...myObj,
-              value: myObj.id,
-              label: myObj.name,
+              value: myObj?.id,
+              label: myObj?.name,
             };
             setSelectedOption(selectedVal);
             handleSelectedValue(selectedVal);
-          })
-          .catch((e) => {
-            console.log(e);
-          });
+          }
+        );
       }
     } else {
       handleSelectedValue(newValue);
@@ -87,81 +77,6 @@ const MySelect = ({
         styles={customStyles}
         formatCreateLabel={formatCreateLabel}
       />
-      {/* {row?.departments?.map((dep) => (
-                    <Fragment key={dep}>
-                      <TableRow key={dep}>
-                        <StyledTableCell
-                          align="center"
-                          rowSpan={
-                            dep?.offices?.length === 0
-                              ? 2
-                              : dep.offices.length + 1
-                          }
-                        >
-                          <div
-                            dangerouslySetInnerHTML={{
-                              __html: highlightText(dep.name),
-                            }}
-                          />
-                        </StyledTableCell>
-                      </TableRow>
-
-                      {dep?.offices?.length === 0 && (
-                        <>
-                          <TableRow>
-                            <StyledTableCell align="center"></StyledTableCell>
-                            <StyledTableCell align="center"></StyledTableCell>
-                            <StyledTableCell align="center"></StyledTableCell>
-                            {isAuthenticated && (
-                              <TableCell align="center">
-                                <Edit
-                                  sx={{ color: "green", cursor: "pointer" }}
-                                  onClick={() => handleEdit(row)}
-                                />
-                              </TableCell>
-                            )}
-                          </TableRow>
-                        </>
-                      )}
-
-                      {dep?.offices?.length !== 0 &&
-                        dep?.offices?.map((office) => (
-                          <>
-                            <TableRow key={office}>
-                              <StyledTableCell align="center">
-                                <div
-                                  dangerouslySetInnerHTML={{
-                                    __html: highlightText(office.office),
-                                  }}
-                                />
-                              </StyledTableCell>
-                              <StyledTableCell align="center">
-                                <div
-                                  dangerouslySetInnerHTML={{
-                                    __html: highlightText(office.number),
-                                  }}
-                                />
-                              </StyledTableCell>
-                              <StyledTableCell align="center">
-                                <div
-                                  dangerouslySetInnerHTML={{
-                                    __html: highlightText(office.notes),
-                                  }}
-                                />
-                              </StyledTableCell>
-                              {isAuthenticated && (
-                                <TableCell align="center">
-                                  <Edit
-                                    sx={{ color: "green", cursor: "pointer" }}
-                                    onClick={() => handleEdit(row)}
-                                  />
-                                </TableCell>
-                              )}
-                            </TableRow>
-                          </>
-                        ))}
-                    </Fragment>
-                  ))} */}
     </Box>
   );
 };

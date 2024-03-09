@@ -175,24 +175,25 @@ import MyModal from "./MyModal";
 const flattenData = (data) => {
   const flattenedData = [];
   let idCounter = 1;
-  data?.forEach((sector) => {
-    sector.departments?.forEach((department) => {
-      const offices = department?.offices?.length ? department.offices : [{}];
-      offices?.forEach((office) => {
-        flattenedData.push({
-          sectorId: sector.id,
-          departmentId: department.id,
-          officeId: office.id,
-          id: idCounter++,
-          name: sector.name || "",
-          department: department.name || "",
-          office: office.name || "",
-          phoneNumber: office.phoneNumber || "",
-          notes: office.notes || "",
+  data &&
+    data?.forEach((sector) => {
+      sector.departments?.forEach((department) => {
+        const offices = department?.offices?.length ? department.offices : [{}];
+        offices?.forEach((office) => {
+          flattenedData.push({
+            sectorId: sector.id,
+            departmentId: department.id,
+            officeId: office.id,
+            id: idCounter++,
+            name: sector.name || "",
+            department: department.name || "",
+            office: office.name || "",
+            phoneNumber: office.phoneNumber || "",
+            notes: office.notes || "",
+          });
         });
       });
     });
-  });
 
   return flattenedData;
 };
@@ -203,6 +204,7 @@ const PhonesTable = ({ search }) => {
   const [filteredRows, setFilteredRows] = useState([]);
   const [showModal, setShowModal] = useState(false);
   const [updatedValues, setUpdatedValues] = useState({});
+  const [showPagination, setShowPagination] = useState(true);
   const { isAuthenticated } = useSelector((state) => state.auth);
 
   const columns = useMemo(() => {
@@ -231,12 +233,8 @@ const PhonesTable = ({ search }) => {
   }, [isAuthenticated]);
 
   const handleEditClick = (row) => {
-    console.log(row);
     setUpdatedValues(row);
     setShowModal(true);
-    console.log(filteredRows);
-    // const { sectorId, departmentId, officeId } = extractIdsFromRow(row.id);
-    // console.log(sectorId, departmentId, officeId);
   };
 
   useEffect(() => {
@@ -256,31 +254,13 @@ const PhonesTable = ({ search }) => {
     }
   }, [data, search, columns]);
 
-  // const extractIdsFromRow = (rowId) => {
-  //   let result = {};
-  //   filteredRows?.forEach((sector) => {
-  //     const department = sector.departments.find((dep) =>
-  //       dep.offices.find((office) => office.id === rowId)
-  //     );
-
-  //     if (department) {
-  //       const office = department.offices.find((office) => office.id === rowId);
-  //       result = {
-  //         sectorId: sector.id,
-  //         departmentId: department.id,
-  //         officeId: office.id,
-  //       };
-  //     }
-  //   });
-
-  //   return result;
+  // const handlePrint = () => {
+  //   setShowPagination(false);
+  //   window.print();
   // };
-  // const rows = flattenData(data && data);
-
   const handleClose = () => {
     setShowModal(false);
   };
-
   return (
     <>
       <EditPhone
@@ -288,6 +268,17 @@ const PhonesTable = ({ search }) => {
         setOpen={handleClose}
         updatedValues={updatedValues}
       />
+      {/* <div
+        style={{
+          display: "flex",
+          justifyContent: "flex-end",
+          marginBottom: "16px",
+        }}
+      >
+        <Button id="btn-print" variant="outlined" onClick={() => handlePrint()}>
+          Print
+        </Button>
+      </div> */}
       <div
         style={{
           minHeight: "100%",
@@ -306,13 +297,14 @@ const PhonesTable = ({ search }) => {
           <DataGrid
             rows={filteredRows}
             columns={columns}
-            initialState={{
-              pagination: {
-                paginationModel: { page: 0, pageSize: 12 },
-              },
-            }}
-            pageSizeOptions={[5, 10]}
-            // columnBuffer={3}
+            // pagination={showPagination}
+            // initialState={{
+            //   pagination: {
+            //     paginationModel: { page: 0, pageSize: 13 },
+            //   },
+            // }}
+            // pageSizeOptions={[5, 10]}
+          
           />
         ) : (
           <Typography>لا توجد نتائج بحث</Typography>

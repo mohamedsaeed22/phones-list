@@ -32,8 +32,9 @@ export const updateSector = createAsyncThunk(
   "sector/update",
   async (sector, thunkAPI) => {
     try {
-      const response = await api.post("api/Sector/Update", sector);
-      return response;
+      const response = await api.post("api/Sector/Update?id="+sector.id, {name:sector.name});
+      console.log(response);
+      return response.data;
     } catch (error) {
       return thunkAPI.rejectWithValue(serializeError(error.message));
     }

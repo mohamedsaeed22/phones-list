@@ -44,14 +44,12 @@ const MyHeader = (props) => {
         username: usernameRef.current.value,
         password: passwordRef.current.value,
       })
-    )
-      .unwrap()
-      .then(() => {
+    ).then(({ payload }) => {
+      console.log(payload);
+      if (payload.status === 200) {
         setOpen(false);
-      })
-      .catch((error) => {
-        console.log(error);
-      });
+      }
+    });
   };
 
   return (
@@ -89,6 +87,7 @@ const MyHeader = (props) => {
         </form>
       </MyModal>
       <Stack
+        id="my-header"
         paddingInline={2}
         height="60px"
         borderBottom="1px solid #ccc"

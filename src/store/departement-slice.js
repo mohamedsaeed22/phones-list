@@ -32,8 +32,8 @@ export const updateDepartement = createAsyncThunk(
   "departement/update",
   async (dep, thunkAPI) => {
     try {
-      const response = await api.put(
-        "api/Department/Update",
+      const response = await api.post(
+        "api/Department/Update?id=" + dep.id,
         dep
       );
       return response;

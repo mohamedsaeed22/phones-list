@@ -12,6 +12,20 @@ export const addOffice = createAsyncThunk(
     }
   }
 );
+export const updateOffice = createAsyncThunk(
+  "office/updateOffice",
+  async (office, thunkAPI) => {
+    try {
+      const response = await api.post(
+        "api/Office/Update?id=" + office.id,
+        office
+      );
+      return response;
+    } catch (error) {
+      return error.message;
+    }
+  }
+);
 
 const initialState = {
   offices: [],
@@ -32,15 +46,28 @@ const officeSlice = createSlice({
       })
       .addCase(addOffice.fulfilled, (state, action) => {
         state.isLoading = true;
-        console.log(action.payload.data)
+        console.log(action.payload.data);
         state.offices.push(action.payload.data);
       })
       .addCase(addOffice.rejected, (state, action) => {
         state.isLoading = false;
         state.error = action.payload;
       });
+    builder
+      .addCase(updateOffice.pending, (state) => {
+        state.isLoading = true;
+        state.error = null;
+      })
+      .addCase(updateOffice.fulfilled, (state, action) => {
+        state.isLoading = true;
+        console.log(action.payload.data);
+        state.offices.push(action.payload.data);
+      })
+      .addCase(updateOffice.rejected, (state, action) => {
+        state.isLoading = false;
+        state.error = action.payload;
+      });
   },
 });
-
 
 export default officeSlice.reducer;
