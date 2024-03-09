@@ -296,6 +296,7 @@ const PhonesTable = ({ search }) => {
         ) : filteredRows?.length > 0 ? (
           <DataGrid
             rows={filteredRows}
+            
             columns={columns}
             // pagination={showPagination}
             // initialState={{
