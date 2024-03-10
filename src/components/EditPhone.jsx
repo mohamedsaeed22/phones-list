@@ -9,10 +9,12 @@ import { updateOffice } from "../store/office-slice";
 import { notifyFailed, notifySuccess } from "./ToastifyAlert";
 import { getAllData } from "../store/dictionary-slice";
 const initialObj = {
-  id: "",
-  department: "",
-  name: "",
-  office: "",
+  sectorId: "",
+  sectorName: "",
+  departementId: "",
+  departementName: "",
+  officeId: "",
+  officeName: "",
   phoneNumber: "",
   notes: "",
 };
@@ -25,8 +27,11 @@ const EditPhone = ({ open, setOpen, updatedValues }) => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    if (updatedValues.name !== phoneArr.name) {
-      dispatch(updateSector({ name: phoneArr.name, id: phoneArr.sectorId }))
+    if (updatedValues.sectorName !== phoneArr.sectorName) {
+      console.log({ name: phoneArr.sectorName, id: phoneArr.sectorId });
+      dispatch(
+        updateSector({ name: phoneArr.sectorName, id: phoneArr.sectorId })
+      )
         .unwrap()
         .then(() => {
           notifySuccess("تم تعديل القطاع بنجاح");
@@ -36,12 +41,17 @@ const EditPhone = ({ open, setOpen, updatedValues }) => {
           notifyFailed("حدث خطا ما");
         });
     }
-    if (updatedValues.department !== phoneArr.department) {
+    if (updatedValues.departementName !== phoneArr.departementName) {
+      console.log({
+        name: phoneArr.departementName,
+        sectorId: phoneArr.sectorId,
+        id: phoneArr.departementId,
+      });
       dispatch(
         updateDepartement({
-          name: phoneArr.department,
+          name: phoneArr.departementName,
           sectorId: phoneArr.sectorId,
-          id: phoneArr.departmentId,
+          id: phoneArr.departementId,
         })
       )
         .unwrap()
@@ -54,16 +64,16 @@ const EditPhone = ({ open, setOpen, updatedValues }) => {
         });
     }
     if (
-      updatedValues.office !== phoneArr.office ||
+      updatedValues.officeName !== phoneArr.officeName ||
       updatedValues.notes !== phoneArr.notes
     ) {
       dispatch(
         updateOffice({
-          name: phoneArr.office,
+          name: phoneArr.officeName,
           id: phoneArr.officeId,
           phoneNumber: phoneArr.phoneNumber,
           notes: phoneArr.notes,
-          departmentId: phoneArr.departmentId,
+          departmentId: phoneArr.departementId,
         })
       )
         .unwrap()
@@ -74,6 +84,13 @@ const EditPhone = ({ open, setOpen, updatedValues }) => {
         .catch((error) => {
           notifyFailed("حدث خطأ ما: " + error.message);
         });
+      console.log({
+        name: phoneArr.officeName,
+        id: phoneArr.officeId,
+        phoneNumber: phoneArr.phoneNumber,
+        notes: phoneArr.notes,
+        departmentId: phoneArr.departementId,
+      });
     }
     setOpen(false);
   };
@@ -93,9 +110,9 @@ const EditPhone = ({ open, setOpen, updatedValues }) => {
             id="outlined-sector-update"
             label="القطاع"
             variant="outlined"
-            value={phoneArr.name}
+            value={phoneArr.sectorName}
             onChange={(e) => handleChangeInput(e)}
-            name="name"
+            name="sectorName"
             type="text"
             required
             fullWidth
@@ -104,8 +121,8 @@ const EditPhone = ({ open, setOpen, updatedValues }) => {
           <TextField
             id="outlined-department-update"
             label="الاداره"
-            name="department"
-            value={phoneArr.department}
+            name="departementName"
+            value={phoneArr.departementName}
             onChange={(e) => handleChangeInput(e)}
             fullWidth
             variant="outlined"
@@ -116,9 +133,9 @@ const EditPhone = ({ open, setOpen, updatedValues }) => {
             id="outlined-office-update"
             label="المكتب"
             fullWidth
-            name="office"
+            name="officeName"
             variant="outlined"
-            value={phoneArr.office}
+            value={phoneArr.officeName}
             onChange={(e) => handleChangeInput(e)}
             required
             sx={{ marginBottom: "20px" }}
@@ -129,7 +146,7 @@ const EditPhone = ({ open, setOpen, updatedValues }) => {
             fullWidth
             variant="outlined"
             name="phoneNumber"
-            type="number"
+            type="text"
             value={phoneArr.phoneNumber}
             onChange={(e) => handleChangeInput(e)}
             required

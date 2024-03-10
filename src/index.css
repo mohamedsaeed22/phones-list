@@ -15,9 +15,11 @@ html {
   height: 21px;
   width: 200px;
 }
+
 #search-input {
   height: 21px;
 }
+
 #office-input::placeholder,
 #phone-input::placeholder,
 #notes-input::placeholder {
@@ -25,7 +27,13 @@ html {
 }
 
 @media print {
-  #my-header {
-    display: none;
+  #my-header,
+  #addPhone-form,
+  .edit-col {
+    display: none !important;
   }
 }
+/* 
+.edit-col {
+  background-color: red !important;
+} */

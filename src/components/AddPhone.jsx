@@ -113,7 +113,7 @@ const AddPhone = () => {
   };
 
   return (
-    <form onSubmit={handleAddPhone}>
+    <form onSubmit={handleAddPhone} id="addPhone-form">
       <Stack
         margin={2}
         direction="row"
@@ -160,7 +160,7 @@ const AddPhone = () => {
         <TextField
           id="phone-input"
           placeholder="الرقم"
-          type="number"
+          type="text"
           size="small"
           inputProps={{
             min: 0,
