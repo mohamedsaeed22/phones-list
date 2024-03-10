@@ -1,5 +1,5 @@
 import MyModal from "./MyModal";
-import { TextField } from "@mui/material";
+import { TextField, Box } from "@mui/material";
 import { Button } from "@mui/material";
 import { useEffect, useState } from "react";
 import { useDispatch } from "react-redux";
@@ -42,6 +42,7 @@ const EditPhone = ({ open, setOpen, updatedValues }) => {
         });
     }
     if (updatedValues.departementName !== phoneArr.departementName) {
+      console.log("update dep");
       console.log({
         name: phoneArr.departementName,
         sectorId: phoneArr.sectorId,
@@ -129,39 +130,42 @@ const EditPhone = ({ open, setOpen, updatedValues }) => {
             required
             sx={{ marginBottom: "20px" }}
           />
-          <TextField
-            id="outlined-office-update"
-            label="المكتب"
-            fullWidth
-            name="officeName"
-            variant="outlined"
-            value={phoneArr.officeName}
-            onChange={(e) => handleChangeInput(e)}
-            required
-            sx={{ marginBottom: "20px" }}
-          />
-          <TextField
-            id="outlined-number-update"
-            label="الرقم"
-            fullWidth
-            variant="outlined"
-            name="phoneNumber"
-            type="text"
-            value={phoneArr.phoneNumber}
-            onChange={(e) => handleChangeInput(e)}
-            required
-            sx={{ marginBottom: "20px" }}
-          />
-          <TextField
-            id="outlined-notes-update"
-            label="ملاحظات"
-            fullWidth
-            variant="outlined"
-            name="notes"
-            value={phoneArr.notes}
-            onChange={(e) => handleChangeInput(e)}
-            sx={{ marginBottom: "20px" }}
-          />
+            <TextField
+              id="outlined-office-update"
+              label="المكتب"
+              fullWidth
+              name="officeName"
+              variant="outlined"
+              value={phoneArr.officeName}
+              onChange={(e) => handleChangeInput(e)}
+              required
+              sx={{ marginBottom: "20px" }}
+              disabled={!updatedValues.officeId}
+            />
+            <TextField
+              id="outlined-number-update"
+              label="الرقم"
+              fullWidth
+              variant="outlined"
+              name="phoneNumber"
+              type="text"
+              value={phoneArr.phoneNumber}
+              onChange={(e) => handleChangeInput(e)}
+              required
+              sx={{ marginBottom: "20px" }}
+              disabled={!updatedValues.officeId}
+            />
+            <TextField
+              id="outlined-notes-update"
+              label="ملاحظات"
+              fullWidth
+              variant="outlined"
+              name="notes"
+              value={phoneArr.notes}
+              onChange={(e) => handleChangeInput(e)}
+              sx={{ marginBottom: "20px" }}
+              disabled={!updatedValues.officeId}
+            />
 
           <Button variant="contained" sx={{ width: "50px" }} type="submit">
             تعديل

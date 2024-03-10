@@ -3,7 +3,7 @@ import TableBody from "@mui/material/TableBody";
 import TableCell, { tableCellClasses } from "@mui/material/TableCell";
 import TableContainer from "@mui/material/TableContainer";
 import CircularProgress from "@mui/material/CircularProgress";
-import { Edit } from "@mui/icons-material";
+import { Edit, Delete } from "@mui/icons-material";
 import TableHead from "@mui/material/TableHead";
 import Box from "@mui/material/Box";
 import TableRow from "@mui/material/TableRow";
@@ -13,6 +13,8 @@ import { Fragment, useEffect, useState } from "react";
 import EditPhone from "./EditPhone";
 import { getAllData } from "../store/dictionary-slice";
 import { useDispatch, useSelector } from "react-redux";
+import { deleteOffice } from "../store/office-slice";
+import { SweatAlert, notifyFailed, notifySuccess } from "./ToastifyAlert";
 
 const StyledTableCell = styled(TableCell)(({ theme }) => ({
   [`&.${tableCellClasses.head}`]: {
@@ -621,6 +623,9 @@ function countObjects(dataArray) {
     totalCount++;
     for (const departmentObj of dataArray.departments) {
       totalCount++;
+      if (departmentObj.offices.length === 0) {
+        totalCount += 1;
+      }
       totalCount += departmentObj.offices.length;
     }
   }
@@ -628,15 +633,16 @@ function countObjects(dataArray) {
 }
 
 export default function TestTable({ search }) {
-  const dispath = useDispatch();
+  const dispatch = useDispatch();
   const [showModal, setShowModal] = useState(false);
   const [updatedValues, setUpdatedValues] = useState({});
   const { data, isLoading, error } = useSelector((state) => state.data);
   const { isAuthenticated } = useSelector((state) => state.auth);
 
   useEffect(() => {
-    dispath(getAllData());
-  }, [dispath]);
+    dispatch(getAllData());
+  }, [dispatch]);
+
   const highlightText = (text) => {
     if (!search || search === "") {
       return text;
@@ -652,6 +658,25 @@ export default function TestTable({ search }) {
   const handleClose = () => {
     setShowModal(false);
   };
+  const handleDeleteOffice = async (id, name) => {
+    const willDelete = await SweatAlert({
+      title: "هل متاكد من حذف مكتب " + name,
+      icon: "warning",
+      dangerMode: true,
+    });
+    if (willDelete) {
+      dispatch(deleteOffice(id))
+        .unwrap()
+        .then(() => {
+          notifySuccess("تم حذف المكتب بنجاح");
+          dispatch(getAllData());
+        })
+        .catch((err) => {
+          notifyFailed("حدث خطا ما");
+        });
+    }
+  };
+
   console.log(updatedValues);
   return (
     <>
@@ -696,12 +721,12 @@ export default function TestTable({ search }) {
                 <CircularProgress />
               </StyledTableCell>
             )}
-            {DUMMY_DATA?.map((row, index) => (
+            {data?.map((row, index) => (
               <Fragment key={row}>
                 <TableRow key={row.id}>
                   <StyledTableCell
                     align="center"
-                    rowSpan={countObjects(DUMMY_DATA[index])}
+                    rowSpan={countObjects(data[index])}
                   >
                     <div
                       dangerouslySetInnerHTML={{
@@ -710,12 +735,40 @@ export default function TestTable({ search }) {
                     />
                   </StyledTableCell>
                 </TableRow>
+
+                {/* {row?.departments?.offices.length === 0 && (
+                  <Fragment>
+                    <TableRow>
+                      <StyledTableCell
+                        align="center"
+                        rowSpan={1}
+                      ></StyledTableCell>
+                    </TableRow>
+                    <TableRow>
+                      <StyledTableCell align="center"></StyledTableCell>
+                      <StyledTableCell align="center"></StyledTableCell>
+                      <StyledTableCell align="center"></StyledTableCell>
+                      <StyledTableCell align="center" className="edit-col">
+                        {
+                          <Edit
+                            sx={{ color: "green", cursor: "pointer" }}
+                          />
+                        }
+                      </StyledTableCell>
+                    </TableRow>
+                  </Fragment>
+                )} */}
+
                 {row?.departments?.map((dep) => (
                   <Fragment key={dep}>
                     <TableRow key={dep.id}>
                       <StyledTableCell
                         align="center"
-                        rowSpan={dep.offices.length + 1}
+                        rowSpan={
+                          dep?.offices?.length === 0
+                            ? 2
+                            : dep.offices.length + 1
+                        }
                       >
                         <div
                           dangerouslySetInnerHTML={{
@@ -724,6 +777,37 @@ export default function TestTable({ search }) {
                         />
                       </StyledTableCell>
                     </TableRow>
+
+                    {dep?.offices?.length === 0 && (
+                      <>
+                        <TableRow>
+                          <StyledTableCell align="center"></StyledTableCell>
+                          <StyledTableCell align="center"></StyledTableCell>
+                          <StyledTableCell align="center"></StyledTableCell>
+                          <StyledTableCell align="center" className="edit-col">
+                            {
+                              <Edit
+                                sx={{ color: "green", cursor: "pointer" }}
+                                onClick={() => {
+                                  setShowModal(true);
+                                  setUpdatedValues({
+                                    sectorId: row.id,
+                                    sectorName: row.name,
+                                    departementId: dep.id,
+                                    departementName: dep.name,
+                                    officeId: "",
+                                    officeName: "",
+                                    phoneNumber: "",
+                                    notes: "",
+                                  });
+                                }}
+                              />
+                            }
+                          </StyledTableCell>
+                        </TableRow>
+                      </>
+                    )}
+
                     {dep?.offices?.map((office) => (
                       <>
                         <TableRow key={office.id}>
@@ -750,22 +834,34 @@ export default function TestTable({ search }) {
                           </StyledTableCell>
                           <StyledTableCell align="center" className="edit-col">
                             {
-                              <Edit
-                                sx={{ color: "green", cursor: "pointer" }}
-                                onClick={() => {
-                                  setShowModal(true);
-                                  setUpdatedValues({
-                                    sectorId: row.id,
-                                    sectorName: row.name,
-                                    departementId: dep.id,
-                                    departementName: dep.name,
-                                    officeId: office.id,
-                                    officeName: office.name,
-                                    phoneNumber: office.phoneNumber,
-                                    notes: office.notes,
-                                  });
-                                }}
-                              />
+                              <>
+                                <Edit
+                                  sx={{ color: "green", cursor: "pointer" }}
+                                  onClick={() => {
+                                    setShowModal(true);
+                                    setUpdatedValues({
+                                      sectorId: row.id,
+                                      sectorName: row.name,
+                                      departementId: dep.id,
+                                      departementName: dep.name,
+                                      officeId: office.id,
+                                      officeName: office.name,
+                                      phoneNumber: office.phoneNumber,
+                                      notes: office.notes,
+                                    });
+                                  }}
+                                />
+                                <Delete
+                                  sx={{
+                                    marginLeft: "10px",
+                                    cursor: "pointer",
+                                    color: "red",
+                                  }}
+                                  onClick={() =>
+                                    handleDeleteOffice(office.id, office.name)
+                                  }
+                                />
+                              </>
                             }
                           </StyledTableCell>
                         </TableRow>
