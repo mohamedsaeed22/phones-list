@@ -1,13 +1,43 @@
-import React, { useEffect, useMemo, useState } from "react";
-import { DataGrid } from "@mui/x-data-grid";
-import { useDispatch, useSelector } from "react-redux";
-import { getAllData } from "../store/dictionary-slice";
-import { Edit } from "@mui/icons-material";
-import { CircularProgress, Typography, TextField, Button } from "@mui/material";
+import {
+  Table,
+  TableBody,
+  TableCell,
+  tableCellClasses,
+  TableContainer,
+  CircularProgress,
+  TableHead,
+  TableRow,
+  Paper,
+} from "@mui/material";
+import { Edit, Delete } from "@mui/icons-material";
+import { styled } from "@mui/system";
+import { Fragment, useEffect, useState } from "react";
 import EditPhone from "./EditPhone";
-import MyModal from "./MyModal";
+import { getAllData } from "../store/dictionary-slice";
+import { useDispatch, useSelector } from "react-redux";
+import { deleteOffice } from "../store/office-slice";
+import { SweatAlert, notifyFailed, notifySuccess } from "./ToastifyAlert";
+import { deleteSector, getAllSectors } from "../store/sector-slice";
+import {
+  deleteDepartement,
+  getAllDepartements,
+} from "../store/departement-slice";
 
-const mydata = [
+const StyledTableCell = styled(TableCell)(({ theme }) => ({
+  [`&.${tableCellClasses.head}`]: {
+    backgroundColor: "#1976d2",
+    color: theme.palette.common.white,
+    position: "sticky",
+    top: 0,
+    fontWeight: "bold",
+  },
+  [`&.${tableCellClasses.body}`]: {
+    fontSize: 14,
+  },
+  borderRight: "1px solid #ddd",
+}));
+
+const DUMMY_DATA = [
   {
     id: "05387491-c91f-4dba-c329-08dc40286ad2",
     name: "الضبعة",
@@ -68,7 +98,7 @@ const mydata = [
           },
           {
             id: "3c035c5c-22ed-4115-c8f0-08dc4036f15a",
-            name: "الإدارة الزراعية",
+            name: "مدير الإدارة الزراعية",
             phoneNumber: "1253",
             notes: "",
             departmentId: "0db0afa0-7fb0-4402-5596-08dc40286ac8",
@@ -106,6 +136,20 @@ const mydata = [
             name: "مدير إدارة المتابعة",
             phoneNumber: "1040",
             notes: "مقدم / أحمد جمال",
+            departmentId: "8d81154e-b0e8-400a-5597-08dc40286ac8",
+          },
+          {
+            id: "40e7507c-c90b-4ae7-fc9c-08dc40d25200",
+            name: "مستشار مدير الجهاز",
+            phoneNumber: "1050",
+            notes: "د/ أحمد سمير",
+            departmentId: "8d81154e-b0e8-400a-5597-08dc40286ac8",
+          },
+          {
+            id: "59a5ecc9-1f0e-43ce-fc9d-08dc40d25200",
+            name: "مستشار مدير الجهاز للموارد البشرية",
+            phoneNumber: "1051",
+            notes: "د/ داليا ",
             departmentId: "8d81154e-b0e8-400a-5597-08dc40286ac8",
           },
         ],
@@ -205,6 +249,257 @@ const mydata = [
             phoneNumber: "1107",
             notes: "",
             departmentId: "1da48bca-c4f9-4a61-5599-08dc40286ac8",
+          },
+        ],
+      },
+      {
+        id: "e6a67374-736d-46a0-4105-08dc40d247eb",
+        name: "التنظيم والإدارة",
+        sectorId: "05387491-c91f-4dba-c329-08dc40286ad2",
+        offices: [
+          {
+            id: "b3da1c21-6a8e-4e1e-fc9b-08dc40d25200",
+            name: "التنظيم",
+            phoneNumber: "1353",
+            notes: "",
+            departmentId: "e6a67374-736d-46a0-4105-08dc40d247eb",
+          },
+        ],
+      },
+      {
+        id: "cc27d1bf-f470-447e-4106-08dc40d247eb",
+        name: "الامن",
+        sectorId: "05387491-c91f-4dba-c329-08dc40286ad2",
+        offices: [],
+      },
+      {
+        id: "e88d9020-17ef-48a3-4107-08dc40d247eb",
+        name: "الأمن",
+        sectorId: "05387491-c91f-4dba-c329-08dc40286ad2",
+        offices: [
+          {
+            id: "a5af9b0b-b5e1-427f-fc9e-08dc40d25200",
+            name: "بوابة العراق",
+            phoneNumber: "1203",
+            notes: "",
+            departmentId: "e88d9020-17ef-48a3-4107-08dc40d247eb",
+          },
+          {
+            id: "0c46de15-07c6-4872-fc9f-08dc40d25200",
+            name: "بوابة الإمارات",
+            phoneNumber: "1204",
+            notes: "",
+            departmentId: "e88d9020-17ef-48a3-4107-08dc40d247eb",
+          },
+          {
+            id: "57e4edfa-1a88-4451-fca0-08dc40d25200",
+            name: "بوابة السعودية",
+            phoneNumber: "1205",
+            notes: "",
+            departmentId: "e88d9020-17ef-48a3-4107-08dc40d247eb",
+          },
+          {
+            id: "391969f2-2dc3-477e-fca1-08dc40d25200",
+            name: "بوابة رعد 7",
+            phoneNumber: "1206",
+            notes: "",
+            departmentId: "e88d9020-17ef-48a3-4107-08dc40d247eb",
+          },
+          {
+            id: "b8c1892e-8281-4b23-fca2-08dc40d25200",
+            name: "بوابة القائد",
+            phoneNumber: "1207",
+            notes: "",
+            departmentId: "e88d9020-17ef-48a3-4107-08dc40d247eb",
+          },
+          {
+            id: "e86a5a1b-b0fb-4c65-fca3-08dc40d25200",
+            name: "بوابة الزائرين",
+            phoneNumber: "1208",
+            notes: "",
+            departmentId: "e88d9020-17ef-48a3-4107-08dc40d247eb",
+          },
+          {
+            id: "00174470-566f-4f21-fca4-08dc40d25200",
+            name: "بوابة البحرين",
+            phoneNumber: "1209",
+            notes: "",
+            departmentId: "e88d9020-17ef-48a3-4107-08dc40d247eb",
+          },
+          {
+            id: "7297f82f-33df-4a77-fca5-08dc40d25200",
+            name: "بوابة ليبيا",
+            phoneNumber: "1210",
+            notes: "",
+            departmentId: "e88d9020-17ef-48a3-4107-08dc40d247eb",
+          },
+        ],
+      },
+      {
+        id: "d37a96aa-b270-4e1b-4108-08dc40d247eb",
+        name: "إدارى الإمارات",
+        sectorId: "05387491-c91f-4dba-c329-08dc40286ad2",
+        offices: [
+          {
+            id: "d21eaab5-8df9-4a01-fca6-08dc40d25200",
+            name: "مدير إدارة المخازن",
+            phoneNumber: "1301",
+            notes: "مقدم/ رامز",
+            departmentId: "d37a96aa-b270-4e1b-4108-08dc40d247eb",
+          },
+          {
+            id: "3b9fb1d6-fa54-41b4-fca7-08dc40d25200",
+            name: "رئيس فرع القضاء العسكرى",
+            phoneNumber: "1260",
+            notes: "رائد/ اسلام ناشى",
+            departmentId: "d37a96aa-b270-4e1b-4108-08dc40d247eb",
+          },
+          {
+            id: "e37f98c8-3dee-4bfd-fcb3-08dc40d25200",
+            name: "الموارد البشرية ",
+            phoneNumber: "1351",
+            notes: "أ/ محمد جمال",
+            departmentId: "d37a96aa-b270-4e1b-4108-08dc40d247eb",
+          },
+          {
+            id: "d32bb3fd-aad4-43cc-fcb4-08dc40d25200",
+            name: "الموارد البشرية قسم العمليات",
+            phoneNumber: "1352",
+            notes: "",
+            departmentId: "d37a96aa-b270-4e1b-4108-08dc40d247eb",
+          },
+        ],
+      },
+      {
+        id: "d0655bca-ab28-47f8-4109-08dc40d247eb",
+        name: "الماليات",
+        sectorId: "05387491-c91f-4dba-c329-08dc40286ad2",
+        offices: [
+          {
+            id: "c00f7864-6c8a-43d1-fca8-08dc40d25200",
+            name: "مدير الإدارة المالية",
+            phoneNumber: "1257",
+            notes: "",
+            departmentId: "d0655bca-ab28-47f8-4109-08dc40d247eb",
+          },
+          {
+            id: "507aeedf-7ce6-45d9-fca9-08dc40d25200",
+            name: "الخزنة",
+            phoneNumber: "1258",
+            notes: "",
+            departmentId: "d0655bca-ab28-47f8-4109-08dc40d247eb",
+          },
+        ],
+      },
+      {
+        id: "c98ae458-ac50-411c-410a-08dc40d247eb",
+        name: "المكتب الفنى",
+        sectorId: "05387491-c91f-4dba-c329-08dc40286ad2",
+        offices: [
+          {
+            id: "fb50f6f1-af50-475d-fcaa-08dc40d25200",
+            name: "مدير المكتب الفنى",
+            phoneNumber: "1060",
+            notes: "",
+            departmentId: "c98ae458-ac50-411c-410a-08dc40d247eb",
+          },
+        ],
+      },
+      {
+        id: "b10dc532-fcbe-4aff-410b-08dc40d247eb",
+        name: "المساحة",
+        sectorId: "05387491-c91f-4dba-c329-08dc40286ad2",
+        offices: [
+          {
+            id: "33bd4ff4-e2df-4753-fcab-08dc40d25200",
+            name: "رئيس فرع المساحة",
+            phoneNumber: "1252",
+            notes: "",
+            departmentId: "b10dc532-fcbe-4aff-410b-08dc40d247eb",
+          },
+          {
+            id: "c84fd6f3-c2b6-4776-fcac-08dc40d25200",
+            name: "معمل المساحة",
+            phoneNumber: "1249",
+            notes: "",
+            departmentId: "b10dc532-fcbe-4aff-410b-08dc40d247eb",
+          },
+          {
+            id: "44475571-2e81-42c8-fcad-08dc40d25200",
+            name: "أرشيف المساحة",
+            phoneNumber: "1250",
+            notes: "",
+            departmentId: "b10dc532-fcbe-4aff-410b-08dc40d247eb",
+          },
+        ],
+      },
+      {
+        id: "f293c6cf-df64-4dce-410c-08dc40d247eb",
+        name: "الكهرباء",
+        sectorId: "05387491-c91f-4dba-c329-08dc40286ad2",
+        offices: [
+          {
+            id: "e42c2cf5-1ba4-46c2-fcae-08dc40d25200",
+            name: "مدير إدارة الكهرباء",
+            phoneNumber: "1259",
+            notes: "",
+            departmentId: "f293c6cf-df64-4dce-410c-08dc40d247eb",
+          },
+        ],
+      },
+      {
+        id: "21c8ad04-c46a-445e-410d-08dc40d247eb",
+        name: "المخازن",
+        sectorId: "05387491-c91f-4dba-c329-08dc40286ad2",
+        offices: [
+          {
+            id: "f7745678-f397-4927-fcaf-08dc40d25200",
+            name: "مدير مخزن الأسمدة",
+            phoneNumber: "1302",
+            notes: "",
+            departmentId: "21c8ad04-c46a-445e-410d-08dc40d247eb",
+          },
+          {
+            id: "278b4cc0-442a-442c-fcb0-08dc40d25200",
+            name: " مخزن النفحات",
+            phoneNumber: "1303",
+            notes: "",
+            departmentId: "21c8ad04-c46a-445e-410d-08dc40d247eb",
+          },
+          {
+            id: "56cbed00-5527-4976-fcb1-08dc40d25200",
+            name: " مخزن 7",
+            phoneNumber: "1304",
+            notes: "",
+            departmentId: "21c8ad04-c46a-445e-410d-08dc40d247eb",
+          },
+          {
+            id: "e3ef7cec-4e81-47a5-fcb2-08dc40d25200",
+            name: " مخزن الإمارات",
+            phoneNumber: "1305",
+            notes: "",
+            departmentId: "21c8ad04-c46a-445e-410d-08dc40d247eb",
+          },
+        ],
+      },
+      {
+        id: "78eecb4f-6769-4ce0-410e-08dc40d247eb",
+        name: "إدارى العراق",
+        sectorId: "05387491-c91f-4dba-c329-08dc40286ad2",
+        offices: [
+          {
+            id: "819d5361-da09-42c6-fcb5-08dc40d25200",
+            name: "مدير قطاع سفنكس",
+            phoneNumber: "1401",
+            notes: "مقدم طيار/ محمد مختار",
+            departmentId: "78eecb4f-6769-4ce0-410e-08dc40d247eb",
+          },
+          {
+            id: "bca208cc-e44f-49c3-fcb6-08dc40d25200",
+            name: "التنظيم",
+            phoneNumber: "1406",
+            notes: "",
+            departmentId: "78eecb4f-6769-4ce0-410e-08dc40d247eb",
           },
         ],
       },
@@ -328,93 +623,123 @@ const mydata = [
     ],
   },
 ];
-const flattenData = (data) => {
-  const flattenedData = [];
-  let idCounter = 1;
-  data &&
-    data?.forEach((sector) => {
-      sector.departments?.forEach((department) => {
-        const offices = department?.offices?.length ? department.offices : [{}];
-        offices?.forEach((office) => {
-          flattenedData.push({
-            sectorId: sector.id,
-            departmentId: department.id,
-            officeId: office.id,
-            id: idCounter++,
-            name: sector.name || "",
-            department: department.name || "",
-            office: office.name || "",
-            phoneNumber: office.phoneNumber || "",
-            notes: office.notes || "",
-          });
-        });
-      });
-    });
 
-  return flattenedData;
-};
+function countObjects(dataArray) {
+  let totalCount = 0;
+  if (dataArray) {
+    totalCount++;
+    for (const departmentObj of dataArray.departments) {
+      totalCount++;
+      if (departmentObj.offices.length === 0) {
+        totalCount += 1;
+      }
+      totalCount += departmentObj.offices.length;
+    }
+  }
+  return totalCount;
+}
 
-const PhonesTable = ({ search }) => {
-  const dispath = useDispatch();
-  const { data, isLoading, error } = useSelector((state) => state.data);
-  const [filteredRows, setFilteredRows] = useState([]);
+export default function PhonesTable({ search }) {
+  let count = 0;
+  const dispatch = useDispatch();
   const [showModal, setShowModal] = useState(false);
   const [updatedValues, setUpdatedValues] = useState({});
-  const [showPagination, setShowPagination] = useState(true);
+  const { data, isLoading } = useSelector((state) => state.data);
   const { isAuthenticated } = useSelector((state) => state.auth);
 
-  const columns = useMemo(() => {
-    const baseColumns = [
-      { field: "id", headerName: "م", width: 20 },
-      { field: "name", headerName: "القطاع", width: 200 },
-      { field: "department", headerName: "الاداره", width: 200 },
-      { field: "office", headerName: "المكتب", width: 200 },
-      { field: "phoneNumber", headerName: "الرقم", width: 200 },
-      { field: "notes", headerName: "ملاحظات", width: 200 },
-    ];
-
-    const actionsColumn = {
-      field: "actions",
-      headerName: "الاكشن",
-      width: 100,
-      print: false,
-      renderCell: (params) => (
-        <Edit
-          className="actions-column" // Add class name here
-          sx={{ color: "green", cursor: "pointer" }}
-          onClick={() => handleEditClick(params.row)}
-        />
-      ),
-    };
-
-    return isAuthenticated ? [...baseColumns, actionsColumn] : baseColumns;
-  }, [isAuthenticated]);
-
-  const handleEditClick = (row) => {
-    setUpdatedValues(row);
-    setShowModal(true);
-  };
+  useEffect(() => {
+    dispatch(getAllData());
+  }, [dispatch]);
 
   useEffect(() => {
-    dispath(getAllData());
-  }, [dispath]);
-
-  useEffect(() => {
-    if (!search) {
-      setFilteredRows(flattenData(data.length > 0 && data));
-    } else {
-      const filteredData = flattenData(data).filter((row) =>
-        columns.some((column) =>
-          String(row[column.field]).toLowerCase().includes(search.toLowerCase())
-        )
-      );
-      setFilteredRows(filteredData);
+    const highlightedElement = document.getElementById("highlighted-element");
+    if (highlightedElement) {
+      highlightedElement.scrollIntoView({
+        behavior: "smooth",
+        block: "center",
+      });
     }
-  }, [data, search, columns]);
+  }, [search]);
+
+  const highlightText = (text) => {
+    if (!search || search === "") {
+      return text;
+    }
+    const regex = new RegExp(`(${search})`, "gi");
+    return text.replace(
+      regex,
+      (match) =>
+        `<span id="highlighted-element" style="background-color: yellow;">${match}</span>`
+    );
+  };
 
   const handleClose = () => {
     setShowModal(false);
   };
+
+  const handleDeleteOffice = async (id, name) => {
+    notifyFailed("حذف المكتب لا يعمل..جارى العمل عليه");
+
+    // const willDelete = await SweatAlert({
+    //   title: "هل متاكد من حذف مكتب " + name,
+    //   icon: "warning",
+    //   dangerMode: true,
+    // });
+    // if (willDelete) {
+    //   dispatch(deleteOffice(id))
+    //     .unwrap()
+    //     .then(() => {
+    //       notifySuccess("تم حذف المكتب بنجاح");
+    //       dispatch(getAllData());
+    //     })
+    //     .catch((err) => {
+    //       notifyFailed("حدث خطا ما");
+    //     });
+    // }
+  };
+
+  const handleDeleteDep = async (dep) => {
+    notifyFailed("حذف الاداره لا يعمل..جارى العمل عليها");
+
+    // const willDelete = await SweatAlert({
+    //   title: "هل متاكد من حذف مكتب " + dep.name,
+    //   icon: "warning",
+    //   dangerMode: true,
+    // });
+    // if (willDelete) {
+    //   dispatch(deleteDepartement(dep.id))
+    //     .unwrap()
+    //     .then(() => {
+    //       notifySuccess("تم حذف الاداره بنجاح");
+    //       dispatch(getAllDepartements());
+    //       dispatch(getAllData());
+    //     })
+    //     .catch((err) => {
+    //       notifyFailed("حدث خطا ما");
+    //     });
+    // }
+  };
+  
+  const handleDeleteSector = async (sectorId, sectorName) => {
+    const willDelete = await SweatAlert({
+      title: "هل متاكد من حذف قطاع " + sectorName,
+      icon: "warning",
+      dangerMode: true,
+    });
+    if (willDelete) {
+      dispatch(deleteSector(sectorId))
+        .unwrap()
+        .then(() => {
+          notifySuccess("تم حذف القطاع بنجاح");
+          dispatch(getAllData());
+          dispatch(getAllSectors());
+        })
+        .catch((err) => {
+          notifyFailed("حدث خطا ما");
+        });
+    }
+  };
+
   return (
     <>
       <EditPhone
@@ -422,51 +747,250 @@ const PhonesTable = ({ search }) => {
         setOpen={handleClose}
         updatedValues={updatedValues}
       />
-      {/* <div
+      <TableContainer
+        component={Paper}
+        id="tableContainer"
         style={{
-          display: "flex",
-          justifyContent: "flex-end",
-          marginBottom: "16px",
+          maxHeight: isAuthenticated ? "85vh" : "91vh",
+          overflowY: "auto",
         }}
       >
-        <Button id="btn-print" variant="outlined" onClick={() => handlePrint()}>
-          Print
-        </Button>
-      </div> */}
-      <div
-        style={{
-          minHeight: "100%",
-          width: "100%",
-          paddingInline: "8px",
-          display: "flex",
-          alignItems: "center",
-          justifyContent: "center",
-        }}
-      >
-        {isLoading ? (
-          <CircularProgress />
-        ) : error ? (
-          <Typography color="error">{error}</Typography>
-        ) : filteredRows?.length > 0 ? (
-          <DataGrid
-            rows={filteredRows}
-            columns={columns}
-            // pagination={showPagination}
-            // initialState={{
-            //   pagination: {
-            //     paginationModel: { page: 0, pageSize: 13 },
-            //   },
-            // }}
-            // pageSizeOptions={[5, 10]}
-          />
-        ) : (
-          <Typography>لا توجد نتائج بحث</Typography>
-        )}
+        <Table aria-label="spanning table">
+          <TableHead>
+            <TableRow>
+              <StyledTableCell align="center" width={250}>
+                القطاع
+              </StyledTableCell>
+              <StyledTableCell align="center">
+                اداره / قرع / قسم
+              </StyledTableCell>
+              <StyledTableCell align="center">المكتب</StyledTableCell>
+              <StyledTableCell align="center" width={250}>
+                الرقم
+              </StyledTableCell>
+              <StyledTableCell align="center" width={250}>
+                ملاحظات
+              </StyledTableCell>
+              {isAuthenticated && (
+                <StyledTableCell align="center" className="edit-col">
+                  تعديل
+                </StyledTableCell>
+              )}
 
-        
-      </div>
+              <StyledTableCell align="center" width={50}>
+                م
+              </StyledTableCell>
+            </TableRow>
+          </TableHead>
+          <TableBody>
+            {isLoading && (
+              <StyledTableCell
+                rowSpan={6}
+                sx={{
+                  position: "absolute",
+                  top: "50%",
+                  left: "50%",
+                  transform: "translate(-50%, -50%)",
+                }}
+              >
+                <CircularProgress />
+              </StyledTableCell>
+            )}
+            {data?.map((row, index) => (
+              <Fragment key={row}>
+                <TableRow key={row.id}>
+                  <StyledTableCell
+                    align="center"
+                    rowSpan={
+                      row.departments.length === 0
+                        ? countObjects(data[index]) + 3
+                        : countObjects(data[index])
+                    }
+                  >
+                    <div
+                      dangerouslySetInnerHTML={{
+                        __html: highlightText(row.name),
+                      }}
+                    />
+                  </StyledTableCell>
+                </TableRow>
+                {row?.departments?.map((dep) => (
+                  <Fragment key={dep}>
+                    <TableRow key={dep.id}>
+                      <StyledTableCell
+                        align="center"
+                        rowSpan={
+                          dep?.offices?.length === 0
+                            ? 2
+                            : dep.offices.length + 1
+                        }
+                      >
+                        <div
+                          dangerouslySetInnerHTML={{
+                            __html: highlightText(dep.name),
+                          }}
+                        />
+                      </StyledTableCell>
+                    </TableRow>
+
+                    {dep?.offices?.length === 0 && (
+                      <>
+                        <TableRow>
+                          <StyledTableCell align="center"></StyledTableCell>
+                          <StyledTableCell align="center"></StyledTableCell>
+                          <StyledTableCell align="center"></StyledTableCell>
+                          {isAuthenticated && (
+                            <StyledTableCell
+                              align="center"
+                              className="edit-col"
+                            >
+                              <Edit
+                                sx={{ color: "green", cursor: "pointer" }}
+                                onClick={() => {
+                                  setShowModal(true);
+                                  setUpdatedValues({
+                                    sectorId: row.id,
+                                    sectorName: row.name,
+                                    departementId: dep.id,
+                                    departementName: dep.name,
+                                    officeId: "",
+                                    officeName: "",
+                                    phoneNumber: "",
+                                    notes: "",
+                                  });
+                                }}
+                              />
+                              <Delete
+                                sx={{
+                                  marginLeft: "10px",
+                                  cursor: "pointer",
+                                  color: "red",
+                                }}
+                                onClick={() => handleDeleteDep(dep)}
+                              />
+                            </StyledTableCell>
+                          )}
+                          <TableCell align="center">{(count += 1)}</TableCell>
+                        </TableRow>
+                      </>
+                    )}
+
+                    {dep?.offices?.map((office) => (
+                      <>
+                        <TableRow key={office.id}>
+                          <StyledTableCell align="center">
+                            <div
+                              dangerouslySetInnerHTML={{
+                                __html: highlightText(office.name),
+                              }}
+                            />
+                          </StyledTableCell>
+                          <StyledTableCell align="center">
+                            <div
+                              dangerouslySetInnerHTML={{
+                                __html: highlightText(office.phoneNumber),
+                              }}
+                            />
+                          </StyledTableCell>
+                          <StyledTableCell align="center">
+                            <div
+                              dangerouslySetInnerHTML={{
+                                __html: highlightText(office.notes),
+                              }}
+                            />
+                          </StyledTableCell>
+                          {isAuthenticated && (
+                            <StyledTableCell
+                              align="center"
+                              className="edit-col"
+                            >
+                              {
+                                <>
+                                  <Edit
+                                    sx={{ color: "green", cursor: "pointer" }}
+                                    onClick={() => {
+                                      setShowModal(true);
+                                      setUpdatedValues({
+                                        sectorId: row.id,
+                                        sectorName: row.name,
+                                        departementId: dep.id,
+                                        departementName: dep.name,
+                                        officeId: office.id,
+                                        officeName: office.name,
+                                        phoneNumber: office.phoneNumber,
+                                        notes: office.notes,
+                                      });
+                                    }}
+                                  />
+                                  <Delete
+                                    sx={{
+                                      marginLeft: "10px",
+                                      cursor: "pointer",
+                                      color: "red",
+                                    }}
+                                    onClick={() =>
+                                      handleDeleteOffice(office.id, office.name)
+                                    }
+                                  />
+                                </>
+                              }
+                            </StyledTableCell>
+                          )}
+                          <TableCell align="center">{(count += 1)}</TableCell>
+                        </TableRow>
+                      </>
+                    ))}
+                  </Fragment>
+                ))}
+                {row?.departments?.length === 0 && (
+                  <>
+                    <TableRow>
+                      <StyledTableCell
+                        align="center"
+                        rowSpan={2}
+                      ></StyledTableCell>
+                    </TableRow>
+                    <TableRow>
+                      <StyledTableCell align="center"></StyledTableCell>
+                      <StyledTableCell align="center"></StyledTableCell>
+                      <StyledTableCell align="center"></StyledTableCell>
+                      {isAuthenticated && (
+                        <StyledTableCell align="center" className="edit-col">
+                          <Edit
+                            sx={{ color: "green", cursor: "pointer" }}
+                            onClick={() => {
+                              setShowModal(true);
+                              setUpdatedValues({
+                                sectorId: row.id,
+                                sectorName: row.name,
+                                departementId: "",
+                                departementName: "",
+                                officeId: "",
+                                officeName: "",
+                                phoneNumber: "",
+                                notes: "",
+                              });
+                            }}
+                          />
+                          <Delete
+                            sx={{
+                              marginLeft: "10px",
+                              cursor: "pointer",
+                              color: "red",
+                            }}
+                            onClick={() => handleDeleteSector(row.id, row.name)}
+                          />
+                        </StyledTableCell>
+                      )}
+                      <TableCell align="center">{(count += 1)}</TableCell>
+                    </TableRow>
+                  </>
+                )}
+              </Fragment>
+            ))}
+          </TableBody>
+        </Table>
+      </TableContainer>
     </>
   );
-};
-
-export default PhonesTable;
+}

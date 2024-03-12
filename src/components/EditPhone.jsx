@@ -1,6 +1,5 @@
 import MyModal from "./MyModal";
-import { TextField, Box } from "@mui/material";
-import { Button } from "@mui/material";
+import { TextField,Button } from "@mui/material";
 import { useEffect, useState } from "react";
 import { useDispatch } from "react-redux";
 import { updateSector } from "../store/sector-slice";
@@ -66,7 +65,8 @@ const EditPhone = ({ open, setOpen, updatedValues }) => {
     }
     if (
       updatedValues.officeName !== phoneArr.officeName ||
-      updatedValues.notes !== phoneArr.notes
+      updatedValues.notes !== phoneArr.notes ||
+      updatedValues.phoneNumber !== phoneArr.phoneNumber
     ) {
       dispatch(
         updateOffice({
@@ -118,7 +118,7 @@ const EditPhone = ({ open, setOpen, updatedValues }) => {
             required
             fullWidth
             sx={{ marginBottom: "20px" }}
-          />
+            />
           <TextField
             id="outlined-department-update"
             label="الاداره"
@@ -129,43 +129,44 @@ const EditPhone = ({ open, setOpen, updatedValues }) => {
             variant="outlined"
             required
             sx={{ marginBottom: "20px" }}
+            disabled={!updatedValues.departementId}
           />
-            <TextField
-              id="outlined-office-update"
-              label="المكتب"
-              fullWidth
-              name="officeName"
-              variant="outlined"
-              value={phoneArr.officeName}
-              onChange={(e) => handleChangeInput(e)}
-              required
-              sx={{ marginBottom: "20px" }}
-              disabled={!updatedValues.officeId}
-            />
-            <TextField
-              id="outlined-number-update"
-              label="الرقم"
-              fullWidth
-              variant="outlined"
-              name="phoneNumber"
-              type="text"
-              value={phoneArr.phoneNumber}
-              onChange={(e) => handleChangeInput(e)}
-              required
-              sx={{ marginBottom: "20px" }}
-              disabled={!updatedValues.officeId}
-            />
-            <TextField
-              id="outlined-notes-update"
-              label="ملاحظات"
-              fullWidth
-              variant="outlined"
-              name="notes"
-              value={phoneArr.notes}
-              onChange={(e) => handleChangeInput(e)}
-              sx={{ marginBottom: "20px" }}
-              disabled={!updatedValues.officeId}
-            />
+          <TextField
+            id="outlined-office-update"
+            label="المكتب"
+            fullWidth
+            name="officeName"
+            variant="outlined"
+            value={phoneArr.officeName}
+            onChange={(e) => handleChangeInput(e)}
+            required
+            sx={{ marginBottom: "20px" }}
+            disabled={!updatedValues.officeId}
+          />
+          <TextField
+            id="outlined-number-update"
+            label="الرقم"
+            fullWidth
+            variant="outlined"
+            name="phoneNumber"
+            type="text"
+            value={phoneArr.phoneNumber}
+            onChange={(e) => handleChangeInput(e)}
+            required
+            sx={{ marginBottom: "20px" }}
+            disabled={!updatedValues.officeId}
+          />
+          <TextField
+            id="outlined-notes-update"
+            label="ملاحظات"
+            fullWidth
+            variant="outlined"
+            name="notes"
+            value={phoneArr.notes}
+            onChange={(e) => handleChangeInput(e)}
+            sx={{ marginBottom: "20px" }}
+            disabled={!updatedValues.officeId}
+          />
 
           <Button variant="contained" sx={{ width: "50px" }} type="submit">
             تعديل

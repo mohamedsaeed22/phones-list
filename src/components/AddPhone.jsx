@@ -1,9 +1,7 @@
+import { useEffect, useState } from "react";
 import { Stack, TextField, Button, Box } from "@mui/material";
 import AddIcCallIcon from "@mui/icons-material/AddIcCall";
-import MySelect from "./MySelect";
-import { useEffect, useState } from "react";
-import { useDispatch } from "react-redux";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { addSector, getAllSectors } from "../store/sector-slice";
 import { addDepartement, getAllDepartements } from "../store/departement-slice";
 import { getAllData } from "./../store/dictionary-slice";
@@ -24,10 +22,8 @@ const AddPhone = () => {
   const { sectors } = useSelector((state) => state.sector);
   const { data } = useSelector((state) => state.data);
   const [selectedSector, setSelectedSector] = useState("");
-
   const [deps, setDeps] = useState([]);
   const [selectedDepartement, setSelectedDepartement] = useState("");
-
   const [office, setOffice] = useState("");
   const [phone, setPhone] = useState("");
   const [notes, setNotes] = useState("");
@@ -50,6 +46,14 @@ const AddPhone = () => {
     }));
   };
 
+  const checkNumber = (number) => {
+    return data?.some((sector) =>
+      sector.departments?.some((department) =>
+        department.offices?.some((office) => office?.phoneNumber === number)
+      )
+    );
+  };
+
   const handleAddPhone = (e) => {
     e.preventDefault();
     const addPhone = {
@@ -58,15 +62,19 @@ const AddPhone = () => {
       notes: notes,
       departmentId: selectedDepartement.id,
     };
-    dispatch(addOffice(addPhone))
-      .unwrap()
-      .then(() => {
-        notifySuccess("تم اضافه الرقم بنجاح");
-        dispatch(getAllData());
-      })
-      .catch((err) => {
-        notifyFailed("حدث خطا ما " + err.message);
-      });
+    if (checkNumber(phone)) {
+      notifyFailed("هذا الرقم موجود ب الفعل");
+    } else {
+      dispatch(addOffice(addPhone))
+        .unwrap()
+        .then(() => {
+          notifySuccess("تم اضافه الرقم بنجاح");
+          dispatch(getAllData());
+        })
+        .catch((err) => {
+          notifyFailed("حدث خطا ما " + err.message);
+        });
+    }
   };
 
   const handleSectorChange = async (newValue, actionMeta) => {
@@ -85,6 +93,7 @@ const AddPhone = () => {
         };
         setDeps(depsInSector(selectedVal.id));
         setSelectedSector(selectedVal);
+        dispatch(getAllData());
       });
     } else {
       setSelectedSector(newValue);
@@ -106,6 +115,7 @@ const AddPhone = () => {
         };
         setDeps((prev) => [...prev, selectedVal]);
         setSelectedDepartement(selectedVal);
+        dispatch(getAllData());
       });
     } else {
       setSelectedDepartement(newValue);

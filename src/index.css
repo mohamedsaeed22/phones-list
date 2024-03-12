@@ -27,6 +27,9 @@ html {
 }
 
 @media print {
+  #tableContainer {
+    max-height: none !important;
+  }
   #my-header,
   #addPhone-form,
   .edit-col {

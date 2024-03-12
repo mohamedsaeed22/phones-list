@@ -6,7 +6,7 @@ const BASE_URL = "http://172.16.1.138:9040/";
 axios.defaults.headers.post['Access-Control-Allow-Origin'] = '*';
 const api = axios.create({
   baseURL: BASE_URL,
-  timeout: 2000,
+  timeout: 3000,
   headers: {
     "Content-Type": "application/json",
   },

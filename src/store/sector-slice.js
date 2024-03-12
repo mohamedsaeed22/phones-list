@@ -27,12 +27,25 @@ export const addSector = createAsyncThunk(
     }
   }
 );
+export const deleteSector = createAsyncThunk(
+  "sector/delete",
+  async (sectorId, thunkAPI) => {
+    try {
+      const response = await api.post("api/Sector/Delete?id=" + sectorId);
+      return response;
+    } catch (error) {
+      return thunkAPI.rejectWithValue(serializeError(error.message));
+    }
+  }
+);
 
 export const updateSector = createAsyncThunk(
   "sector/update",
   async (sector, thunkAPI) => {
     try {
-      const response = await api.post("api/Sector/Update?id="+sector.id, {name:sector.name});
+      const response = await api.post("api/Sector/Update?id=" + sector.id, {
+        name: sector.name,
+      });
       console.log(response);
       return response.data;
     } catch (error) {
@@ -101,6 +114,20 @@ const sectorSlice = createSlice({
         console.log(action.payload);
       })
       .addCase(updateSector.rejected, (state, action) => {
+        state.isLoading = false;
+        state.error = serializeError(action.payload);
+      });
+    // update sector
+    builder
+      .addCase(deleteSector.pending, (state) => {
+        state.isLoading = true;
+        state.error = null;
+      })
+      .addCase(deleteSector.fulfilled, (state, action) => {
+        state.isLoading = true;
+        console.log(action.payload);
+      })
+      .addCase(deleteSector.rejected, (state, action) => {
         state.isLoading = false;
         state.error = serializeError(action.payload);
       });

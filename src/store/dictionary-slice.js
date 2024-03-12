@@ -49,6 +49,6 @@ const dictionarySlice = createSlice({
   },
 });
 
-export const { pushOffice } = dictionarySlice.actions;
+export const { pushOffice, checkNumber } = dictionarySlice.actions;
 
 export default dictionarySlice.reducer;

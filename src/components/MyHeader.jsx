@@ -1,4 +1,4 @@
-import React, { useRef, useState } from "react";
+import   { useRef, useState } from "react";
 import {
   Stack,
   Box,
@@ -6,17 +6,20 @@ import {
   Typography,
   TextField,
   InputAdornment,
+  CircularProgress,
 } from "@mui/material";
 import Logo from "../assets/logo.png";
 import { AdminPanelSettings, Search, Logout } from "@mui/icons-material";
 import { useDispatch, useSelector } from "react-redux";
 import MyModal from "./MyModal";
 import { clearToken, login } from "../store/auth-slice";
-import { getAllData } from "../store/dictionary-slice";
+import { SweatAlert } from "./ToastifyAlert";
 
 const MyHeader = (props) => {
   const dispatch = useDispatch();
-  const { isAuthenticated, error } = useSelector((state) => state.auth);
+  const { isAuthenticated, error, isLoading } = useSelector(
+    (state) => state.auth
+  );
   const { search, setSearch } = props;
   const [open, setOpen] = useState(false);
   const usernameRef = useRef(null);
@@ -33,8 +36,15 @@ const MyHeader = (props) => {
     setOpen(false);
   };
 
-  const handleLogout = () => {
-    dispatch(clearToken());
+  const handleLogout = async () => {
+    const willLogout = await SweatAlert({
+      title: "هل متاكد من تسجيل الخروج؟ ",
+      icon: "warning",
+      dangerMode: true,
+    });
+    if (willLogout) {
+      dispatch(clearToken());
+    }
   };
 
   const handleSubmit = async (e) => {
@@ -45,7 +55,6 @@ const MyHeader = (props) => {
         password: passwordRef.current.value,
       })
     ).then(({ payload }) => {
-      console.log(payload);
       if (payload.status === 200) {
         setOpen(false);
       }
@@ -81,9 +90,13 @@ const MyHeader = (props) => {
               {error}
             </Typography>
           )}
-          <Button variant="contained" sx={{ width: "50px" }} type="submit">
-            دخول
-          </Button>
+          {isLoading ? (
+            <CircularProgress />
+          ) : (
+            <Button variant="contained" sx={{ width: "50px" }} type="submit">
+              دخول
+            </Button>
+          )}
         </form>
       </MyModal>
       <Stack
