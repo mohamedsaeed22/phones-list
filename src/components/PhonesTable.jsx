@@ -719,7 +719,7 @@ export default function PhonesTable({ search }) {
     //     });
     // }
   };
-  
+
   const handleDeleteSector = async (sectorId, sectorName) => {
     const willDelete = await SweatAlert({
       title: "هل متاكد من حذف قطاع " + sectorName,
@@ -752,25 +752,18 @@ export default function PhonesTable({ search }) {
         id="tableContainer"
         style={{
           maxHeight: isAuthenticated ? "85vh" : "91vh",
-          overflowY: "auto",
         }}
       >
         <Table aria-label="spanning table">
           <TableHead>
             <TableRow>
-              <StyledTableCell align="center" width={250}>
-                القطاع
-              </StyledTableCell>
+              <StyledTableCell align="center">القطاع</StyledTableCell>
               <StyledTableCell align="center">
                 اداره / قرع / قسم
               </StyledTableCell>
               <StyledTableCell align="center">المكتب</StyledTableCell>
-              <StyledTableCell align="center" width={250}>
-                الرقم
-              </StyledTableCell>
-              <StyledTableCell align="center" width={250}>
-                ملاحظات
-              </StyledTableCell>
+              <StyledTableCell align="center">الرقم</StyledTableCell>
+              <StyledTableCell align="center">ملاحظات</StyledTableCell>
               {isAuthenticated && (
                 <StyledTableCell align="center" className="edit-col">
                   تعديل
@@ -870,7 +863,9 @@ export default function PhonesTable({ search }) {
                               />
                             </StyledTableCell>
                           )}
-                          <TableCell align="center">{(count += 1)}</TableCell>
+                          <TableCell align="center">
+                            {(count += 1).toLocaleString("ar-EG")}
+                          </TableCell>
                         </TableRow>
                       </>
                     )}
@@ -936,7 +931,9 @@ export default function PhonesTable({ search }) {
                               }
                             </StyledTableCell>
                           )}
-                          <TableCell align="center">{(count += 1)}</TableCell>
+                          <TableCell align="center">
+                            {(count += 1).toLocaleString("ar-EG")}
+                          </TableCell>
                         </TableRow>
                       </>
                     ))}
@@ -982,7 +979,9 @@ export default function PhonesTable({ search }) {
                           />
                         </StyledTableCell>
                       )}
-                      <TableCell align="center">{(count += 1)}</TableCell>
+                      <TableCell align="center">
+                        {(count += 1).toLocaleString("ar-EG")}
+                      </TableCell>
                     </TableRow>
                   </>
                 )}

@@ -62,7 +62,7 @@ const MyHeader = (props) => {
   };
 
   return (
-    <>
+    <Box component="header">
       <MyModal open={open} setOpen={handleClose}>
         <form onSubmit={handleSubmit} style={{ textAlign: "center" }}>
           <TextField
@@ -159,7 +159,7 @@ const MyHeader = (props) => {
           <img src={Logo} alt="logo" style={{ maxWidth: "100%" }} />
         </Box>
       </Stack>
-    </>
+    </Box>
   );
 };
 

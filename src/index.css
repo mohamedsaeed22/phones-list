@@ -27,9 +27,20 @@ html {
 }
 
 @media print {
-  #tableContainer {
-    max-height: none !important;
+  #head-name {
+    display: flex;
   }
+  #tableContainer {
+    top: 1 !important;
+    margin-top: 10px;
+    max-height: none !important;
+    overflow-y: hidden;
+    border: 1px solid #ccc !important;
+  }
+  th {
+    border: 1px solid #ccc !important;
+  }
+
   #my-header,
   #addPhone-form,
   .edit-col {
@@ -40,4 +51,17 @@ html {
 .swal-btn-yes {
   background-color: red;
   color: #fff;
+}
+
+#head-name {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  text-align: center;
+  flex-direction: row;
+  position: fixed;
+  top: 0;
+  width: 100%;
+  background-color: rgb(88, 92, 88);
+   padding-inline: 10px;
 }
