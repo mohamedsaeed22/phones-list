@@ -17,9 +17,8 @@ function App() {
         <MyHeader search={search} setSearch={setSearch} />
         {isAuthenticated && <AddPhone />}
         <MyBanner />
-        {/* <PhonesTable search={search} /> */}
-        {/* <TestTable search={search} /> */}
-      </div>
+        <PhonesTable search={search} />
+       </div>
     </>
   );
 }

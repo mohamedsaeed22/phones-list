@@ -27,8 +27,9 @@ const StyledTableCell = styled(TableCell)(({ theme }) => ({
   [`&.${tableCellClasses.head}`]: {
     backgroundColor: "#1976d2",
     color: theme.palette.common.white,
-    position: "sticky",
-    top: 0,
+    // position: "sticky",
+    // top: 0,
+    // zIndex:1,
     fontWeight: "bold",
   },
   [`&.${tableCellClasses.body}`]: {
@@ -751,15 +752,18 @@ export default function PhonesTable({ search }) {
         component={Paper}
         id="tableContainer"
         style={{
-          maxHeight: isAuthenticated ? "85vh" : "91vh",
+          maxHeight: isAuthenticated ? "85vh" : "92vh",
         }}
       >
-        <Table aria-label="spanning table">
+        <Table aria-label="phones table">
           <TableHead>
             <TableRow>
               <StyledTableCell align="center">القطاع</StyledTableCell>
               <StyledTableCell align="center">
                 اداره / قرع / قسم
+              </StyledTableCell>
+              <StyledTableCell align="center" width={50}>
+                م
               </StyledTableCell>
               <StyledTableCell align="center">المكتب</StyledTableCell>
               <StyledTableCell align="center">الرقم</StyledTableCell>
@@ -769,10 +773,6 @@ export default function PhonesTable({ search }) {
                   تعديل
                 </StyledTableCell>
               )}
-
-              <StyledTableCell align="center" width={50}>
-                م
-              </StyledTableCell>
             </TableRow>
           </TableHead>
           <TableBody>
@@ -829,6 +829,9 @@ export default function PhonesTable({ search }) {
                     {dep?.offices?.length === 0 && (
                       <>
                         <TableRow>
+                          <StyledTableCell align="center">
+                            {(count += 1)}
+                          </StyledTableCell>
                           <StyledTableCell align="center"></StyledTableCell>
                           <StyledTableCell align="center"></StyledTableCell>
                           <StyledTableCell align="center"></StyledTableCell>
@@ -863,9 +866,6 @@ export default function PhonesTable({ search }) {
                               />
                             </StyledTableCell>
                           )}
-                          <TableCell align="center">
-                            {(count += 1).toLocaleString("ar-EG")}
-                          </TableCell>
                         </TableRow>
                       </>
                     )}
@@ -873,6 +873,9 @@ export default function PhonesTable({ search }) {
                     {dep?.offices?.map((office) => (
                       <>
                         <TableRow key={office.id}>
+                          <StyledTableCell align="center">
+                            {(count += 1)}
+                          </StyledTableCell>
                           <StyledTableCell align="center">
                             <div
                               dangerouslySetInnerHTML={{
@@ -931,9 +934,6 @@ export default function PhonesTable({ search }) {
                               }
                             </StyledTableCell>
                           )}
-                          <TableCell align="center">
-                            {(count += 1).toLocaleString("ar-EG")}
-                          </TableCell>
                         </TableRow>
                       </>
                     ))}
@@ -948,6 +948,9 @@ export default function PhonesTable({ search }) {
                       ></StyledTableCell>
                     </TableRow>
                     <TableRow>
+                      <StyledTableCell align="center">
+                        {(count += 1)}
+                      </StyledTableCell>
                       <StyledTableCell align="center"></StyledTableCell>
                       <StyledTableCell align="center"></StyledTableCell>
                       <StyledTableCell align="center"></StyledTableCell>
@@ -979,9 +982,6 @@ export default function PhonesTable({ search }) {
                           />
                         </StyledTableCell>
                       )}
-                      <TableCell align="center">
-                        {(count += 1).toLocaleString("ar-EG")}
-                      </TableCell>
                     </TableRow>
                   </>
                 )}
