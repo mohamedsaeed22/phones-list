@@ -35,38 +35,51 @@ thead {
   position: sticky;
   top: 0;
 }
+
+table tr td,
+th {
+  padding: 5px !important;
+  /* font-weight: bold !important; */
+}
+
 @media print {
+  tr.oddRow {
+    background-color: #80808021 !important;
+    print-color-adjust: exact;
+  }
+  tr.evenRow {
+    background-color: #fff !important;
+    print-color-adjust: exact;
+  }
   #head-name {
     display: flex !important;
-  }
+   }
   #tableContainer {
     margin-top: 50px;
     max-height: none !important;
     overflow-y: hidden;
     border: 1px solid #ccc !important;
+    color: #000 !important;
   }
+
   th {
     border: 1px solid #ccc !important;
   }
+
   thead {
     position: static !important;
   }
-
+  thead tr th {
+    color: #000 !important;
+  }
   #my-header,
   #addPhone-form,
   .edit-col {
     display: none !important;
   }
-  @page {
-     /* background-color: brown !important; */
+  @page :first {
+    margin-top: 0in !important;
   }
-
-  /* tr {
-    page-break-inside: avoid;
-  } */
-  /* td {
-    page-break-inside: avoid;
-  } */
 }
 
 #head-name {
@@ -75,10 +88,7 @@ thead {
   justify-content: space-between;
   text-align: center;
   flex-direction: row;
-  /* position: fixed; */
-  /* top: 0; */
   width: 100%;
-  background-color: rgb(88, 92, 88);
   padding-inline: 10px;
   z-index: 1000;
 }

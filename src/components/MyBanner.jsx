@@ -1,30 +1,41 @@
-import { Typography, Stack, Box } from "@mui/material";
-import Logo from "../assets/logo.png";
+import { Typography, Stack } from "@mui/material";
+import Logo from "../assets/logo2.png";
 
 const MyBanner = () => {
   return (
     <Stack id="head-name">
-      <Typography variant="h6">
-        جهاز مستقبل مصر
-        <br />
-        للتنــميه المســتدامه
+      <Typography
+        sx={{ fontWeight: "bold", textAlign: "left", fontSize: "18px" }}
+      >
+        جهاز مستقبل مصر للتنمية المستدامة
         <br />
         فرع نظم المعلومات
       </Typography>
-
-      <Typography variant="h6" sx={{ textDecoration: "underline" }}>
-        دليل ارقام تليفونات <br /> جهاز مستقبل مصر للتنميه المستدامه
+      <Typography
+        variant="h6"
+        sx={{
+          marginTop: "120px",
+          fontWeight: "bold",
+          fontsize: "20px",
+          position: "absolute",
+          left: "50%",
+          transform: "translatex(-50%)",
+        }}
+      >
+        دليل ارقام تليفونات <br />
+        <span style={{ textDecoration: "underline" }}>
+          جهاز مستقبل مصر للتنمية المستدامة
+        </span>
       </Typography>
-        <img
-          src={Logo}
-          alt="logo"
-          style={{
-            width: "180px",
-            height: "120px",
-            objectFit: "cover",
-          }}
-        />
-      
+      <img
+        src={Logo}
+        alt="logo"
+        style={{
+          width: "156px",
+          height: "120px",
+          objectFit: "cover",
+        }}
+      />
     </Stack>
   );
 };
