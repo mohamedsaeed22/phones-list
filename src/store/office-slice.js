@@ -18,7 +18,6 @@ export const deleteOffice = createAsyncThunk(
   async (id, thunkAPI) => {
     try {
       const response = await api.post("api/Office/Delete?id=" + id);
-      console.log(response)
       return response;
     } catch (error) {
       return error.message;
@@ -60,7 +59,6 @@ const officeSlice = createSlice({
       })
       .addCase(addOffice.fulfilled, (state, action) => {
         state.isLoading = true;
-        console.log(action.payload.data);
         state.offices.push(action.payload.data);
       })
       .addCase(addOffice.rejected, (state, action) => {
@@ -75,7 +73,6 @@ const officeSlice = createSlice({
       })
       .addCase(updateOffice.fulfilled, (state, action) => {
         state.isLoading = true;
-        console.log(action.payload.data);
         state.offices.push(action.payload.data);
       })
       .addCase(updateOffice.rejected, (state, action) => {
@@ -90,7 +87,6 @@ const officeSlice = createSlice({
       })
       .addCase(deleteOffice.fulfilled, (state, action) => {
         state.isLoading = true;
-        console.log(action.payload.data);
       })
       .addCase(deleteOffice.rejected, (state, action) => {
         state.isLoading = false;

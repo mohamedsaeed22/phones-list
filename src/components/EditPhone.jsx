@@ -27,8 +27,7 @@ const EditPhone = ({ open, setOpen, updatedValues }) => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     if (updatedValues.sectorName !== phoneArr.sectorName) {
-      console.log({ name: phoneArr.sectorName, id: phoneArr.sectorId });
-      dispatch(
+       dispatch(
         updateSector({ name: phoneArr.sectorName, id: phoneArr.sectorId })
       )
         .unwrap()
@@ -41,12 +40,7 @@ const EditPhone = ({ open, setOpen, updatedValues }) => {
         });
     }
     if (updatedValues.departementName !== phoneArr.departementName) {
-      console.log("update dep");
-      console.log({
-        name: phoneArr.departementName,
-        sectorId: phoneArr.sectorId,
-        id: phoneArr.departementId,
-      });
+ 
       dispatch(
         updateDepartement({
           name: phoneArr.departementName,
@@ -85,13 +79,7 @@ const EditPhone = ({ open, setOpen, updatedValues }) => {
         .catch((error) => {
           notifyFailed("حدث خطأ ما: " + error.message);
         });
-      console.log({
-        name: phoneArr.officeName,
-        id: phoneArr.officeId,
-        phoneNumber: phoneArr.phoneNumber,
-        notes: phoneArr.notes,
-        departmentId: phoneArr.departementId,
-      });
+ 
     }
     setOpen(false);
   };
