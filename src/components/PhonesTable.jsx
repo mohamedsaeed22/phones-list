@@ -10,7 +10,7 @@ import {
   Paper,
   Box,
 } from "@mui/material";
-import { Edit, Delete, Height } from "@mui/icons-material";
+import { Edit, Delete } from "@mui/icons-material";
 import { styled } from "@mui/system";
 import { Fragment, useEffect, useState } from "react";
 import EditPhone from "./EditPhone";
@@ -35,6 +35,13 @@ const StyledTableCell = styled(TableCell)(({ theme }) => ({
   },
   borderRight: "1px solid #ddd",
   maxHeight: "8px",
+  "@media print": {
+    [`&.${tableCellClasses.head}`]: {
+      backgroundColor: "#070F2B",
+      "-webkit-print-color-adjust": "exact",
+      colorAdjust: "exact",
+    },
+  },
 }));
 
 function countObjects(dataArray) {
@@ -89,7 +96,7 @@ export default function PhonesTable({ search }) {
   const handleClose = () => {
     setShowModal(false);
   };
- 
+
   const handleDeleteOffice = async (id, name) => {
     const willDelete = await SweatAlert({
       title: "هل متاكد من حذف مكتب " + name,
@@ -195,7 +202,7 @@ export default function PhonesTable({ search }) {
                 }}
               >
                 <CircularProgress />
-               </Box>
+              </Box>
             )}
             {Array.isArray(data) &&
               data?.map((row, index) => (
@@ -221,6 +228,7 @@ export default function PhonesTable({ search }) {
                       <TableRow key={dep.id}>
                         <StyledTableCell
                           align="center"
+                          className={index % 2 === 0 ? "evenDep" : "oddDep"}
                           rowSpan={
                             dep?.offices?.length === 0
                               ? 2
@@ -364,6 +372,7 @@ export default function PhonesTable({ search }) {
                       ))}
                     </Fragment>
                   ))}
+
                   {row?.departments?.length === 0 && (
                     <>
                       <TableRow>

@@ -35,43 +35,56 @@ thead {
   position: sticky;
   top: 0;
 }
-
 table tr td,
 th {
-  padding: 5px !important;
-  /* font-weight: bold !important; */
+  padding: 6px !important;
+ }
+.evenDep {
+  /* background-color: #80808057 !important; */
 }
-
+.oddDep {
+  /* background-color: green !important; */
+}
 @media print {
   tr.oddRow {
-    background-color: #80808021 !important;
+    background-color: #80808057 !important;
     print-color-adjust: exact;
   }
   tr.evenRow {
     background-color: #fff !important;
     print-color-adjust: exact;
   }
+  table tr td,
+  th {
+    padding: 1px !important;
+  }
+
   #head-name {
     display: flex !important;
-   }
+  }
   #tableContainer {
     margin-top: 50px;
     max-height: none !important;
     overflow-y: hidden;
-    border: 1px solid #ccc !important;
     color: #000 !important;
   }
+  table thead {
+    border: 0.5px solid #070f2b !important;
+  }
 
-  th {
-    border: 1px solid #ccc !important;
+  td {
+    border: 0.5px solid #070f2b !important;
+    /* border-style: solid !important; */
+    /* border-color:#070f2b !important ; */
   }
 
   thead {
     position: static !important;
   }
   thead tr th {
-    color: #000 !important;
+    color: #fff !important;
   }
+
   #my-header,
   #addPhone-form,
   .edit-col {
