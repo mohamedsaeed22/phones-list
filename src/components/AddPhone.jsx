@@ -84,8 +84,7 @@ const AddPhone = () => {
       setSelectedDepartement(null);
     } else if (actionMeta.action === "create-option") {
       await dispatch(addSector(newValue.value)).then(({ payload }) => {
-        console.log(payload);
-        const myObj = payload.data;
+         const myObj = payload.data;
         const selectedVal = {
           ...myObj,
           value: myObj?.id,

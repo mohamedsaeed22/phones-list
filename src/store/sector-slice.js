@@ -46,7 +46,6 @@ export const updateSector = createAsyncThunk(
       const response = await api.post("api/Sector/Update?id=" + sector.id, {
         name: sector.name,
       });
-      console.log(response);
       return response.data;
     } catch (error) {
       return thunkAPI.rejectWithValue(serializeError(error.message));
@@ -111,7 +110,6 @@ const sectorSlice = createSlice({
       })
       .addCase(updateSector.fulfilled, (state, action) => {
         state.isLoading = true;
-        console.log(action.payload);
       })
       .addCase(updateSector.rejected, (state, action) => {
         state.isLoading = false;
@@ -125,7 +123,6 @@ const sectorSlice = createSlice({
       })
       .addCase(deleteSector.fulfilled, (state, action) => {
         state.isLoading = true;
-        console.log(action.payload);
       })
       .addCase(deleteSector.rejected, (state, action) => {
         state.isLoading = false;

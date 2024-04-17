@@ -44,7 +44,6 @@ export const deleteDepartement = createAsyncThunk(
   async (depId, thunkAPI) => {
     try {
       const response = await api.post("api/Department/Delete?id=" + depId);
-      console.log(response);
       return response;
     } catch (error) {
       return error.message;
@@ -114,7 +113,6 @@ const departementSlice = createSlice({
       })
       .addCase(updateDepartement.fulfilled, (state, action) => {
         state.isLoading = true;
-        console.log(action.payload);
       })
       .addCase(updateDepartement.rejected, (state, action) => {
         state.isLoading = false;
@@ -129,7 +127,6 @@ const departementSlice = createSlice({
       })
       .addCase(deleteDepartement.fulfilled, (state, action) => {
         state.isLoading = true;
-        console.log(action.payload);
       })
       .addCase(deleteDepartement.rejected, (state, action) => {
         state.isLoading = false;

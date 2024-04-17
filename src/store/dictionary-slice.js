@@ -642,7 +642,6 @@ export const getAllData = createAsyncThunk(
     try {
       const response = await api.get("GetAllDictionary");
       const responseData = response.data;
-      console.log(responseData);
       return responseData;
     } catch (error) {
       return error.message;
@@ -661,7 +660,6 @@ const dictionarySlice = createSlice({
   initialState,
   reducers: {
     pushOffice: (state, action) => {
-      console.log(action.payload);
       if (action.payload) {
         state.data.push(action.payload);
       }
@@ -680,7 +678,6 @@ const dictionarySlice = createSlice({
       })
       .addCase(getAllData.rejected, (state, action) => {
         state.isLoading = false;
-        console.log(action.payload);
         state.error = action.payload;
       });
   },
