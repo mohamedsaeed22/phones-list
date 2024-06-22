@@ -66,7 +66,6 @@ export default function PhonesTable({ search }) {
   const [updatedValues, setUpdatedValues] = useState({});
   const { data, isLoading, error } = useSelector((state) => state.data);
   const { isAuthenticated } = useSelector((state) => state.auth);
-
   useEffect(() => {
     dispatch(getAllData());
   }, [dispatch]);
@@ -268,10 +267,13 @@ export default function PhonesTable({ search }) {
                                   onClick={() => {
                                     setShowModal(true);
                                     setUpdatedValues({
+                                      sectorIndex: row.index,
                                       sectorId: row.id,
                                       sectorName: row.name,
+                                      depIndex: dep.index,
                                       departementId: dep.id,
                                       departementName: dep.name,
+                                      officeIndex: "",
                                       officeId: "",
                                       officeName: "",
                                       phoneNumber: "",
@@ -338,11 +340,15 @@ export default function PhonesTable({ search }) {
                                       sx={{ color: "green", cursor: "pointer" }}
                                       onClick={() => {
                                         setShowModal(true);
+                                        console.log(row);
                                         setUpdatedValues({
+                                          sectorIndex: row.index,
                                           sectorId: row.id,
                                           sectorName: row.name,
+                                          depIndex: dep.index,
                                           departementId: dep.id,
                                           departementName: dep.name,
+                                          officeIndex: office.index,
                                           officeId: office.id,
                                           officeName: office.name,
                                           phoneNumber: office.phoneNumber,
@@ -401,10 +407,13 @@ export default function PhonesTable({ search }) {
                               onClick={() => {
                                 setShowModal(true);
                                 setUpdatedValues({
+                                  sectorIndex: row.index,
                                   sectorId: row.id,
                                   sectorName: row.name,
+                                  depIndex: "",
                                   departementId: "",
                                   departementName: "",
+                                  officeIndex: "",
                                   officeId: "",
                                   officeName: "",
                                   phoneNumber: "",

@@ -6,6 +6,7 @@ export const addDepartement = createAsyncThunk(
   async (dep, thunkAPI) => {
     try {
       const response = await api.post("api/Department/Create", dep);
+      console.log(response)
       return response;
     } catch (error) {
       return error.message;
@@ -94,10 +95,11 @@ const departementSlice = createSlice({
       .addCase(addDepartement.fulfilled, (state, action) => {
         state.isLoading = true;
         const myObj = action.payload.data;
+        console.log(myObj)
         state.departements.push({
           ...myObj,
-          value: myObj.id,
-          label: myObj.name,
+          value: myObj?.id,
+          label: myObj?.name,
         });
       })
       .addCase(addDepartement.rejected, (state, action) => {

@@ -28,11 +28,13 @@ export const deleteOffice = createAsyncThunk(
 export const updateOffice = createAsyncThunk(
   "office/updateOffice",
   async (office, thunkAPI) => {
+    console.log(office)
     try {
       const response = await api.post(
         "api/Office/Update?id=" + office.id,
         office
       );
+      console.log(response)
       return response;
     } catch (error) {
       return error.message;
@@ -63,6 +65,7 @@ const officeSlice = createSlice({
       })
       .addCase(addOffice.rejected, (state, action) => {
         state.isLoading = false;
+        console.log(action)
         state.error = action.payload;
       });
 

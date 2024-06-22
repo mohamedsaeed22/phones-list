@@ -27,6 +27,9 @@ const AddPhone = () => {
   const [office, setOffice] = useState("");
   const [phone, setPhone] = useState("");
   const [notes, setNotes] = useState("");
+  const [sectorIndex, setSectorIndex] = useState("");
+  const [depIndex, setDepIndex] = useState("");
+  const [officeIndex, setOfficeIndex] = useState("");
 
   useEffect(() => {
     dispatch(getAllData());
@@ -57,6 +60,7 @@ const AddPhone = () => {
   const handleAddPhone = (e) => {
     e.preventDefault();
     const addPhone = {
+      index: officeIndex,
       name: office,
       phoneNumber: phone,
       notes: notes,
@@ -67,12 +71,12 @@ const AddPhone = () => {
     } else {
       dispatch(addOffice(addPhone))
         .unwrap()
-        .then(() => {
+        .then((res) => {
           notifySuccess("تم اضافه الرقم بنجاح");
           dispatch(getAllData());
         })
         .catch((err) => {
-          notifyFailed("حدث خطا ما " + err.message);
+          notifyFailed("حدث خطا ما " + err);
         });
     }
   };
@@ -83,17 +87,19 @@ const AddPhone = () => {
       setDeps(depsInSector(newValue.id));
       setSelectedDepartement(null);
     } else if (actionMeta.action === "create-option") {
-      await dispatch(addSector(newValue.value)).then(({ payload }) => {
-         const myObj = payload.data;
-        const selectedVal = {
-          ...myObj,
-          value: myObj?.id,
-          label: myObj?.name,
-        };
-        setDeps(depsInSector(selectedVal.id));
-        setSelectedSector(selectedVal);
-        dispatch(getAllData());
-      });
+      await dispatch(addSector({ index: 0, name: newValue.value })).then(
+        ({ payload }) => {
+          const myObj = payload.data;
+          const selectedVal = {
+            ...myObj,
+            value: myObj?.id,
+            label: myObj?.name,
+          };
+          setDeps(depsInSector(selectedVal.id));
+          setSelectedSector(selectedVal);
+          dispatch(getAllData());
+        }
+      );
     } else {
       setSelectedSector(newValue);
     }
@@ -104,7 +110,11 @@ const AddPhone = () => {
       setSelectedDepartement(newValue);
     } else if (actionMeta.action === "create-option") {
       await dispatch(
-        addDepartement({ name: newValue.value, sectorId: selectedSector.id })
+        addDepartement({
+          index: 0,
+          name: newValue.value,
+          sectorId: selectedSector.id,
+        })
       ).then(({ payload }) => {
         const myObj = payload.data;
         const selectedVal = {
@@ -131,6 +141,18 @@ const AddPhone = () => {
         alignItems="center"
         justifyContent="center"
       >
+        {/* <TextField
+          id="sector-index"
+          placeholder="ترتيب"
+          type="text"
+          sx={{ width: 80 }}
+          size="small"
+          inputProps={{
+            min: 0,
+          }}
+          value={sectorIndex}
+          onChange={(e) => setSectorIndex(e.target.value)}
+        /> */}
         <Box width={229}>
           <CreatableSelect
             required
@@ -143,7 +165,18 @@ const AddPhone = () => {
             formatCreateLabel={formatCreateLabel}
           />
         </Box>
-
+        {/* <TextField
+          id="dep-index"
+          placeholder="ترتيب"
+          type="text"
+          sx={{ width: 80 }}
+          size="small"
+          inputProps={{
+            min: 0,
+          }}
+          value={depIndex}
+          onChange={(e) => setDepIndex(e.target.value)}
+        /> */}
         <Box width={229}>
           <CreatableSelect
             required
@@ -157,6 +190,18 @@ const AddPhone = () => {
             formatCreateLabel={formatCreateLabel}
           />
         </Box>
+        <TextField
+          id="office-index"
+          placeholder="ترتيب"
+          type="text"
+          sx={{ width: 80 }}
+          size="small"
+          inputProps={{
+            min: 0,
+          }}
+          value={officeIndex}
+          onChange={(e) => setOfficeIndex(e.target.value)}
+        />
         <TextField
           id="office-input"
           placeholder="المكتب"

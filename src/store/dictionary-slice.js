@@ -642,6 +642,13 @@ export const getAllData = createAsyncThunk(
     try {
       const response = await api.get("GetAllDictionary");
       const responseData = response.data;
+      responseData.forEach((item) => {
+        item.departments.sort(sortDepartmentsAndOffices);
+        item.departments.forEach((department) => {
+          department.offices.sort(sortDepartmentsAndOffices);
+        });
+      });
+      console.log(responseData)
       return responseData;
     } catch (error) {
       return error.message;
@@ -649,6 +656,9 @@ export const getAllData = createAsyncThunk(
   }
 );
 
+function sortDepartmentsAndOffices(a, b) {
+  return (a.index || 0) - (b.index || 0);
+}
 const initialState = {
   data: [],
   isLoading: false,

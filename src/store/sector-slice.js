@@ -16,10 +16,11 @@ export const getAllSectors = createAsyncThunk(
 
 export const addSector = createAsyncThunk(
   "sector/add",
-  async (sectorName, thunkAPI) => {
+  async (sector, thunkAPI) => {
     try {
       const response = await api.post("api/Sector/Create", {
-        name: sectorName,
+        index: sector.index,
+        name: sector.name,
       });
       return response;
     } catch (error) {
@@ -42,8 +43,10 @@ export const deleteSector = createAsyncThunk(
 export const updateSector = createAsyncThunk(
   "sector/update",
   async (sector, thunkAPI) => {
+    console.log(sector)
     try {
       const response = await api.post("api/Sector/Update?id=" + sector.id, {
+        index: sector.index,
         name: sector.name,
       });
       return response.data;
